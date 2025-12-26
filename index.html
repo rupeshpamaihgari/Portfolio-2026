@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Handlee&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Custom Cursor with Halo -->
+    <div class="cursor-halo" id="cursorHalo"></div>
+    <div class="custom-cursor" id="customCursor"></div>
+    <!-- Header Navigation -->
+    <header class="header">
+        <nav class="nav-menu">
+            <a href="#intro" class="nav-item active">About me</a>
+            <a href="#achievements" class="nav-item">Achievements</a>
+            <a href="#experience" class="nav-item">Experience</a>
+            <a href="#values" class="nav-item">Values</a>
+            <a href="#projects" class="nav-item">Projects</a>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="scroll-container" id="mainContainer">
+        <div class="blackboard">
+            <!-- Left Side: Hero Image - FIXED -->
+            <div class="left-section">
+                <div class="hero-image-wrapper">
+                    <img src="Hero images/hero-image.jpg" alt="Hero" class="hero-image active" id="heroImage1">
+                    <img src="Hero images/hero-trophy-1.png" alt="Hero Trophy" class="hero-image" id="heroImage2">
+                </div>
+            </div>
+
+            <!-- Right Side: Sliding Content -->
+            <div class="right-content-container" id="rightContent">
+                <!-- Slide 1: Introduction -->
+                <div class="content-slide intro-slide">
+                    <div class="right-section">
+                        <div class="intro-section">
+                            <h1 class="intro-title">Hi, I'm</h1>
+                            <h2 class="intro-name">Rupesh Pamaihgari</h2>
+                            <h3 class="intro-subtitle">Lead Product Designer</h3>
+                            <p class="intro-text">
+                                9+ years of experience designing digital experiences across HR, Recruitment tech, 
+                                Travel, and Transportation domains.
+                            </p>
+                            <p class="intro-text">
+                                10+ complex SaaS products designed | International award winner | 
+                                Passionate about data-driven user research and creative solutions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2: Achievements Carousel -->
+                <div class="content-slide achievements-slide">
+                    <div class="right-section">
+                        <div class="achievements-header">
+                            <h2 class="section-title">Achievements</h2>
+                            <div class="carousel-nav">
+                                <button class="carousel-btn prev" id="prevBtn">←</button>
+                                <span class="carousel-counter"><span id="currentSlide">1</span> / <span id="totalSlides">3</span></span>
+                                <button class="carousel-btn next" id="nextBtn">→</button>
+                            </div>
+                        </div>
+
+                        <div class="achievements-carousel">
+                            <div class="carousel-track" id="carouselTrack">
+                                <!-- Achievement Card 1 -->
+                                <div class="achievement-card">
+                                    <div class="card-inner">
+                                        <h3 class="achievement-title">🏆 MIT Boston's Reality Virtually Hackathon</h3>
+                                        <p class="achievement-description">
+                                            1st Prize winner at MIT Boston's prestigious Reality Virtually Hackathon in 2019. 
+                                            Competed with international teams to create innovative VR/AR solutions.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Achievement Card 2 -->
+                                <div class="achievement-card">
+                                    <div class="card-inner">
+                                        <h3 class="achievement-title">🏆 Bayer's Digital Integrated Hackathon</h3>
+                                        <p class="achievement-description">
+                                            1st Prize winner at Bayer's digital integrated hackathon in 2022. 
+                                            Developed innovative digital health solutions for one of the world's leading pharmaceutical companies.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Achievement Card 3 -->
+                                <div class="achievement-card">
+                                    <div class="card-inner">
+                                        <h3 class="achievement-title">🏆 Hackerearth's Game Development Hackathon</h3>
+                                        <p class="achievement-description">
+                                            1st Prize winner at Hackerearth's India's first game development hackathon in 2016. 
+                                            Also a 2-time Sense star award winner for top performance excellence.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3: Experience Carousel -->
+                <div class="content-slide experience-slide">
+                    <div class="right-section">
+                        <div class="achievements-header">
+                            <h2 class="section-title">Experience</h2>
+                            <div class="carousel-nav">
+                                <button class="carousel-btn prev" id="expPrevBtn">←</button>
+                                <span class="carousel-counter"><span id="expCurrentSlide">1</span> / <span id="expTotalSlides">3</span></span>
+                                <button class="carousel-btn next" id="expNextBtn">→</button>
+                            </div>
+                        </div>
+
+                        <div class="achievements-carousel">
+                            <div class="carousel-track" id="expCarouselTrack">
+                                <!-- Experience Card 1 -->
+                                <div class="achievement-card">
+                                    <div class="card-inner">
+                                        <h3 class="achievement-title">Lead Product Designer</h3>
+                                        <p class="exp-company">SenseHQ | 2021 - Present (3y 10m)</p>
+                                        <p class="exp-domain">HR, Recruitment tech automation</p>
+                                        <p class="achievement-description">
+                                            <strong>Key Projects:</strong><br>
+                                            • Automation workflow builder<br>
+                                            • Resume builder<br>
+                                            • AI Content generator<br>
+                                            • Create site builder
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Experience Card 2 -->
+                                <div class="achievement-card">
+                                    <div class="card-inner">
+                                        <h3 class="achievement-title">Sr. Product Designer</h3>
+                                        <p class="exp-company">Betterplace | 2019 - 2021 (2y 9m)</p>
+                                        <p class="exp-domain">HR - Blue collared employees management</p>
+                                        <p class="achievement-description">
+                                            <strong>Key Projects:</strong><br>
+                                            • Attendance app & Betterplace marketplace<br>
+                                            • Employee onboarding form<br>
+                                            • Employee IDs stack
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Experience Card 3 -->
+                                <div class="achievement-card">
+                                    <div class="card-inner">
+                                        <h3 class="achievement-title">Product Designer</h3>
+                                        <p class="exp-company">Unisys | 2015 - 2019 (4y)</p>
+                                        <p class="exp-domain">Travel and Transportation</p>
+                                        <p class="achievement-description">
+                                            <strong>Key Projects:</strong><br>
+                                            • Indian airport's Airserve, Digital mobile app<br>
+                                            • UEfA, San cargo mobile app
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 4: Values -->
+                <div class="content-slide values-slide">
+                    <div class="right-section">
+                        <h2 class="section-title">Personal Values</h2>
+                        <div class="values-list">
+                            <div class="value-item">
+                                <h3 class="value-title">💪 Be challenging</h3>
+                                <p class="value-desc">Always take obstacle as a challenge instead of losing confidence</p>
+                            </div>
+                            <div class="value-item">
+                                <h3 class="value-title">📚 Never stop learning</h3>
+                                <p class="value-desc">I spend atleast 1 hour to learn something new</p>
+                            </div>
+                            <div class="value-item">
+                                <h3 class="value-title">✨ Be creative to outstand</h3>
+                                <p class="value-desc">I always thrive for creative solutions for complex scenarios. My international awards are proud examples</p>
+                            </div>
+                            <div class="value-item">
+                                <h3 class="value-title">🔍 Be transparent</h3>
+                                <p class="value-desc">I'm okay professionally, being transparent made my life simple and everything</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll Down Indicator -->
+    <div class="scroll-indicator" id="scrollIndicator">
+        <div class="scroll-arrow">↓</div>
+        <p class="scroll-text">Scroll</p>
+    </div>
+
+    <script>
+        // Custom Elastic Cursor with Halo Effect
+        const cursor = document.getElementById('customCursor');
+        const halo = document.getElementById('cursorHalo');
+        let mouseX = 0;
+        let mouseY = 0;
+        let cursorX = 0;
+        let cursorY = 0;
+        let haloX = 0;
+        let haloY = 0;
+        let prevX = 0;
+        let prevY = 0;
+        let speed = 0;
+        
+        // Track mouse position
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            // Calculate speed
+            const deltaX = mouseX - prevX;
+            const deltaY = mouseY - prevY;
+            speed = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            
+            prevX = mouseX;
+            prevY = mouseY;
+        });
+        
+        // Smooth cursor and halo animation
+        function animateCursor() {
+            // Smooth follow for cursor
+            cursorX += (mouseX - cursorX) * 0.2;
+            cursorY += (mouseY - cursorY) * 0.2;
+            
+            // Even smoother follow for halo (creates lag effect)
+            haloX += (mouseX - haloX) * 0.15;
+            haloY += (mouseY - haloY) * 0.15;
+            
+            // Apply elastic effect based on speed
+            const baseSize = 20;
+            const maxStretch = 40;
+            const stretchAmount = Math.min(speed * 0.5, maxStretch - baseSize);
+            
+            // Calculate direction of movement
+            const angle = Math.atan2(mouseY - cursorY, mouseX - cursorX);
+            
+            // Apply stretch in direction of movement
+            const width = baseSize + stretchAmount;
+            const height = baseSize - (stretchAmount * 0.3);
+            
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            cursor.style.width = width + 'px';
+            cursor.style.height = height + 'px';
+            cursor.style.transform = `translate(-50%, -50%) rotate(${angle}rad)`;
+            
+            // Update halo position
+            halo.style.left = haloX + 'px';
+            halo.style.top = haloY + 'px';
+            
+            // Decay speed
+            speed *= 0.9;
+            
+            requestAnimationFrame(animateCursor);
+        }
+        
+        animateCursor();
+        
+        // Hide default cursor on body
+        document.body.style.cursor = 'none';
+
+        // Slide Management
+        const slides = document.querySelectorAll('.content-slide');
+        const heroImage1 = document.getElementById('heroImage1');
+        const heroImage2 = document.getElementById('heroImage2');
+        const mainContainer = document.getElementById('mainContainer');
+        
+        let currentContentSlide = 0;
+        let isAnimating = false;
+
+        // Initialize first slide
+        slides[0].classList.add('active');
+        slides[0].classList.remove('next', 'prev');
+        for (let i = 1; i < slides.length; i++) {
+            slides[i].classList.add('next');
+            slides[i].classList.remove('active', 'prev');
+        }
+
+        function updateSlides(newSlide) {
+            if (isAnimating || newSlide === currentContentSlide || newSlide < 0 || newSlide >= slides.length) {
+                return;
+            }
+
+            isAnimating = true;
+            const direction = newSlide > currentContentSlide ? 'next' : 'prev';
+
+            // Update current slide
+            slides[currentContentSlide].classList.remove('active');
+            slides[currentContentSlide].classList.add(direction === 'next' ? 'prev' : 'next');
+
+            // Update new slide
+            slides[newSlide].classList.remove('prev', 'next');
+            slides[newSlide].classList.add('active');
+
+            // Swap hero images
+            if (newSlide === 1) {
+                heroImage1.classList.remove('active');
+                heroImage2.classList.add('active');
+            } else {
+                heroImage1.classList.add('active');
+                heroImage2.classList.remove('active');
+            }
+
+            currentContentSlide = newSlide;
+
+            // Update active menu item
+            updateActiveMenuItem(newSlide);
+
+            // Update scroll indicator
+            const scrollIndicator = document.getElementById('scrollIndicator');
+            if (scrollIndicator) {
+                // Hide indicator on last slide (Values)
+                if (newSlide >= slides.length - 1) {
+                    scrollIndicator.classList.add('hidden');
+                } else {
+                    scrollIndicator.classList.remove('hidden');
+                }
+            }
+
+            setTimeout(() => {
+                isAnimating = false;
+            }, 800);
+        }
+
+        // Function to update active menu item based on current slide
+        function updateActiveMenuItem(slideIndex) {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach((nav, index) => {
+                nav.classList.remove('active');
+                // Map slide index to menu item index
+                // Slides: Intro(0), Achievements(1), Experience(2), Values(3)
+                // Menu: About me(0), Achievements(1), Experience(2), Values(3), Projects(4)
+                if (index === slideIndex) {
+                    nav.classList.add('active');
+                }
+            });
+        }
+        
+        // Initialize scroll indicator
+        const scrollIndicator = document.getElementById('scrollIndicator');
+        if (scrollIndicator && currentContentSlide >= slides.length - 1) {
+            scrollIndicator.classList.add('hidden');
+        }
+
+        // Wheel scroll handling
+        let scrollTimeout;
+        mainContainer.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                if (e.deltaY > 0) {
+                    // Scroll down
+                    updateSlides(currentContentSlide + 1);
+                } else {
+                    // Scroll up
+                    updateSlides(currentContentSlide - 1);
+                }
+            }, 50);
+        }, { passive: false });
+
+        // Achievements Carousel functionality
+        const track = document.getElementById('carouselTrack');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const currentSlideSpan = document.getElementById('currentSlide');
+        const totalSlidesSpan = document.getElementById('totalSlides');
+        
+        let currentCarouselSlide = 0;
+        const totalSlides = document.querySelectorAll('#carouselTrack .achievement-card').length;
+        totalSlidesSpan.textContent = totalSlides;
+        
+        function updateCarousel() {
+            track.style.transform = `translateX(-${currentCarouselSlide * 100}%)`;
+            currentSlideSpan.textContent = currentCarouselSlide + 1;
+        }
+        
+        if (prevBtn && nextBtn) {
+            prevBtn.addEventListener('click', () => {
+                if (currentCarouselSlide > 0) {
+                    currentCarouselSlide--;
+                    updateCarousel();
+                }
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                if (currentCarouselSlide < totalSlides - 1) {
+                    currentCarouselSlide++;
+                    updateCarousel();
+                }
+            });
+        }
+
+        // Experience Carousel functionality
+        const expTrack = document.getElementById('expCarouselTrack');
+        const expPrevBtn = document.getElementById('expPrevBtn');
+        const expNextBtn = document.getElementById('expNextBtn');
+        const expCurrentSlideSpan = document.getElementById('expCurrentSlide');
+        const expTotalSlidesSpan = document.getElementById('expTotalSlides');
+        
+        let currentExpSlide = 0;
+        const expTotalSlides = document.querySelectorAll('#expCarouselTrack .achievement-card').length;
+        if (expTotalSlidesSpan) expTotalSlidesSpan.textContent = expTotalSlides;
+        
+        function updateExpCarousel() {
+            if (expTrack) {
+                expTrack.style.transform = `translateX(-${currentExpSlide * 100}%)`;
+                if (expCurrentSlideSpan) expCurrentSlideSpan.textContent = currentExpSlide + 1;
+            }
+        }
+        
+        if (expPrevBtn && expNextBtn) {
+            expPrevBtn.addEventListener('click', () => {
+                if (currentExpSlide > 0) {
+                    currentExpSlide--;
+                    updateExpCarousel();
+                }
+            });
+            
+            expNextBtn.addEventListener('click', () => {
+                if (currentExpSlide < expTotalSlides - 1) {
+                    currentExpSlide++;
+                    updateExpCarousel();
+                }
+            });
+        }
+
+        // Navigation menu clicks
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach((item, index) => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Map menu items to slides
+                // Menu: About me(0), Achievements(1), Experience(2), Values(3), Projects(4)
+                // Slides: Intro(0), Achievements(1), Experience(2), Values(3)
+                let targetSlide = 0;
+                if (index === 0) targetSlide = 0;      // About me → Intro
+                else if (index === 1) targetSlide = 1; // Achievements → Achievements slide
+                else if (index === 2) targetSlide = 2; // Experience → Experience slide
+                else if (index === 3) targetSlide = 3; // Values → Values slide
+                else if (index === 4) targetSlide = 1; // Projects → Achievements (no projects section yet)
+                
+                updateSlides(targetSlide);
+                // updateActiveMenuItem is called inside updateSlides, so no need to call it here
+            });
+        });
+        
+        // Initialize active menu item on page load
+        updateActiveMenuItem(0);
+    </script>
+</body>
+</html>
+
