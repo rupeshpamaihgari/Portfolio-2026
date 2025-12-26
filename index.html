@@ -30,8 +30,11 @@
             <!-- Left Side: Hero Image - FIXED -->
             <div class="left-section">
                 <div class="hero-image-wrapper">
-                    <img src="Hero images/hero-image.jpg" alt="Hero" class="hero-image active" id="heroImage1">
-                    <img src="Hero images/hero-trophy-1.png" alt="Hero Trophy" class="hero-image" id="heroImage2">
+                    <div class="tv-screen">
+                        <img src="Hero images/hero-image.jpg" alt="Hero" class="hero-image active" id="heroImage1">
+                        <img src="Hero images/hero-trophy-1.png" alt="Hero Trophy" class="hero-image" id="heroImage2">
+                    </div>
+                    <img src="Hero images/tvframe.png" alt="TV Frame" class="tv-frame-img">
                 </div>
             </div>
 
@@ -41,16 +44,16 @@
                 <div class="content-slide intro-slide">
                     <div class="right-section">
                         <div class="intro-section">
-                            <h1 class="intro-title">Hi, I'm</h1>
-                            <h2 class="intro-name">Rupesh Pamaihgari</h2>
-                            <h3 class="intro-subtitle">Lead Product Designer</h3>
+                            <h1 class="intro-title">Hi, Welcome to my story.</h1>
+                            <h2 class="intro-name">I'm Rupesh Pamaihgari</h2>
+                            <h3 class="intro-subtitle">Staff Product Designer @ Sense | AR/VR/XR Developer</h3>
                             <p class="intro-text">
-                                9+ years of experience designing digital experiences across HR, Recruitment tech, 
-                                Travel, and Transportation domains.
+                                I bridge the gap between complex code and human experience. With over <span class="glow-highlight">10 years of
+                                experience</span>, I specialize in productizing <span class="glow-highlight">AI Agents</span> and SaaS tools from 0 → 1.
                             </p>
                             <p class="intro-text">
-                                10+ complex SaaS products designed | International award winner | 
-                                Passionate about data-driven user research and creative solutions.
+                                I have led the end-to-end design of <span class="glow-highlight">10+ complex platforms</span>, crafting every detail from
+                                research to release.
                             </p>
                         </div>
                     </div>
@@ -60,50 +63,59 @@
                 <div class="content-slide achievements-slide">
                     <div class="right-section">
                         <div class="achievements-header">
-                            <h2 class="section-title">Achievements</h2>
-                            <div class="carousel-nav">
-                                <button class="carousel-btn prev" id="prevBtn">←</button>
-                                <span class="carousel-counter"><span id="currentSlide">1</span> / <span id="totalSlides">3</span></span>
-                                <button class="carousel-btn next" id="nextBtn">→</button>
+                            <div>
+                                <p class="section-subtitle">Achievements - Milestones that define my drive</p>
                             </div>
                         </div>
 
-                        <div class="achievements-carousel">
-                            <div class="carousel-track" id="carouselTrack">
-                                <!-- Achievement Card 1 -->
-                                <div class="achievement-card">
-                                    <div class="card-inner">
-                                        <h3 class="achievement-title">🏆 MIT Boston's Reality Virtually Hackathon</h3>
-                                        <p class="achievement-description">
-                                            1st Prize winner at MIT Boston's prestigious Reality Virtually Hackathon in 2019. 
-                                            Competed with international teams to create innovative VR/AR solutions.
-                                        </p>
-                                    </div>
+                        <div class="accordion" id="achievementsAccordion">
+                            <div class="accordion-item">
+                                <button class="accordion-trigger" type="button" aria-expanded="false" aria-controls="achv-panel-1" id="achv-trigger-1">
+                                    <span class="accordion-title">Winner: MIT “Reality Virtually” Hackathon (2019) — Boston, MA</span>
+                                    <span class="accordion-icon" aria-hidden="true">+</span>
+                                </button>
+                                <div class="accordion-panel" id="achv-panel-1" role="region" aria-labelledby="achv-trigger-1" hidden>
+                                    <p class="accordion-text"><strong>The Challenge:</strong> How can we make roads safer?</p>
+                                    <p class="accordion-text"><strong>The Solution:</strong> I developed an AR/VR solution to solve high-demand use cases: helping people drive better, automating driving tests, monitoring cab driver performance, and assisting insurance companies with compliance.</p>
                                 </div>
+                            </div>
 
-                                <!-- Achievement Card 2 -->
-                                <div class="achievement-card">
-                                    <div class="card-inner">
-                                        <h3 class="achievement-title">🏆 Bayer's Digital Integrated Hackathon</h3>
-                                        <p class="achievement-description">
-                                            1st Prize winner at Bayer's digital integrated hackathon in 2022. 
-                                            Developed innovative digital health solutions for one of the world's leading pharmaceutical companies.
-                                        </p>
-                                    </div>
+                            <div class="accordion-item">
+                                <button class="accordion-trigger" type="button" aria-expanded="false" aria-controls="achv-panel-2" id="achv-trigger-2">
+                                    <span class="accordion-title">Winner: Bayer Integrated Digital Label Hackathon (2022)</span>
+                                    <span class="accordion-icon" aria-hidden="true">+</span>
+                                </button>
+                                <div class="accordion-panel" id="achv-panel-2" role="region" aria-labelledby="achv-trigger-2" hidden>
+                                    <p class="accordion-text"><strong>The Challenge:</strong> How can we empower farmers with data?</p>
+                                    <p class="accordion-text"><strong>The Solution:</strong> I designed an accessible digital solution providing farmers with detailed product-specific information, usage guidelines, and delivery tracking—directly impacting their productivity and profitability.</p>
                                 </div>
+                            </div>
 
-                                <!-- Achievement Card 3 -->
-                                <div class="achievement-card">
-                                    <div class="card-inner">
-                                        <h3 class="achievement-title">🏆 Hackerearth's Game Development Hackathon</h3>
-                                        <p class="achievement-description">
-                                            1st Prize winner at Hackerearth's India's first game development hackathon in 2016. 
-                                            Also a 2-time Sense star award winner for top performance excellence.
-                                        </p>
-                                    </div>
+                            <div class="accordion-item">
+                                <button class="accordion-trigger" type="button" aria-expanded="false" aria-controls="achv-panel-3" id="achv-trigger-3">
+                                    <span class="accordion-title">Winner: HackerEarth’s First Game Development Hackathon (2016)</span>
+                                    <span class="accordion-icon" aria-hidden="true">+</span>
+                                </button>
+                                <div class="accordion-panel" id="achv-panel-3" role="region" aria-labelledby="achv-trigger-3" hidden>
+                                    <p class="accordion-text"><strong>The Challenge:</strong> Stand out among 10,000+ global developers.</p>
+                                    <p class="accordion-text"><strong>The Story:</strong> Winning this highly competitive event in the early stages of my career was a pivotal moment. It validated my skills in game development and fueled the confidence I carry into every project today.</p>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <button class="accordion-trigger" type="button" aria-expanded="false" aria-controls="achv-panel-4" id="achv-trigger-4">
+                                    <span class="accordion-title">2× Consecutive Winner: Sense Internal Star Award</span>
+                                    <span class="accordion-icon" aria-hidden="true">+</span>
+                                </button>
+                                <div class="accordion-panel" id="achv-panel-4" role="region" aria-labelledby="achv-trigger-4" hidden>
+                                    <p class="accordion-text"><strong>The Recognition:</strong> Awarded for “Best Collaboration and Contribution to Success.” A testament to my belief that great products are built by great teams.</p>
                                 </div>
                             </div>
                         </div>
+
+                        <p class="achievements-body">
+                            Beyond these, I have been a runner-up and finalist in several other innovation challenges, constantly testing my limits.
+                        </p>
                     </div>
                 </div>
 
@@ -376,34 +388,28 @@
         }, { passive: false });
 
         // Achievements Carousel functionality
-        const track = document.getElementById('carouselTrack');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const currentSlideSpan = document.getElementById('currentSlide');
-        const totalSlidesSpan = document.getElementById('totalSlides');
-        
-        let currentCarouselSlide = 0;
-        const totalSlides = document.querySelectorAll('#carouselTrack .achievement-card').length;
-        totalSlidesSpan.textContent = totalSlides;
-        
-        function updateCarousel() {
-            track.style.transform = `translateX(-${currentCarouselSlide * 100}%)`;
-            currentSlideSpan.textContent = currentCarouselSlide + 1;
-        }
-        
-        if (prevBtn && nextBtn) {
-            prevBtn.addEventListener('click', () => {
-                if (currentCarouselSlide > 0) {
-                    currentCarouselSlide--;
-                    updateCarousel();
-                }
-            });
-            
-            nextBtn.addEventListener('click', () => {
-                if (currentCarouselSlide < totalSlides - 1) {
-                    currentCarouselSlide++;
-                    updateCarousel();
-                }
+        // Achievements Accordion functionality
+        const achievementsAccordion = document.getElementById('achievementsAccordion');
+        if (achievementsAccordion) {
+            const triggers = achievementsAccordion.querySelectorAll('.accordion-trigger');
+            triggers.forEach((trigger) => {
+                trigger.addEventListener('click', () => {
+                    const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+                    const panelId = trigger.getAttribute('aria-controls');
+                    const panel = panelId ? document.getElementById(panelId) : null;
+
+                    // Close all other panels (classic accordion)
+                    triggers.forEach((t) => {
+                        const pid = t.getAttribute('aria-controls');
+                        const p = pid ? document.getElementById(pid) : null;
+                        t.setAttribute('aria-expanded', 'false');
+                        if (p) p.hidden = true;
+                    });
+
+                    // Toggle clicked panel
+                    trigger.setAttribute('aria-expanded', String(!isExpanded));
+                    if (panel) panel.hidden = isExpanded;
+                });
             });
         }
 
