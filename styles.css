@@ -237,6 +237,7 @@ body {
     box-sizing: border-box;
     overflow: hidden;
     pointer-events: none;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease;
 }
 
 .left-section * {
@@ -344,11 +345,31 @@ body {
     z-index: 10;
     box-sizing: border-box;
     background: transparent;
+    transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1), width 0.8s cubic-bezier(0.4, 0, 0.2, 1), padding 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .right-content-container * {
     max-width: 100%;
     box-sizing: border-box;
+}
+
+/* Design Process: full-width content + TV frame scrolls up out of view */
+body.design-process-mode .left-section {
+    transform: translateY(-140%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+body.design-process-mode .right-content-container {
+    left: 0;
+    width: 100%;
+    padding: 0 80px;
+}
+
+@media (max-width: 768px) {
+    body.design-process-mode .right-content-container {
+        padding: 0 20px;
+    }
 }
 
 .content-slide {
@@ -410,15 +431,15 @@ body {
 .right-section {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
+    justify-content: center;
+    align-items: center;
     height: 100%;
     width: 100%;
     max-width: 100%;
     gap: 20px;
     box-sizing: border-box;
     overflow-y: auto;
-    padding: 60px 0;
+    padding: 60px 12px;
     position: relative;
 }
 
@@ -481,21 +502,21 @@ body {
 .intro-section {
     color: rgba(255, 255, 255, 0.9);
     padding: 30px;
+    padding-top: 0px;
     background: transparent;
     border-radius: 15px;
     border: none;
     box-shadow: none;
 }
 
-/* Align intro text start with the TV frame's top edge on the left (all screens) */
+/* Intro slide spacing */
 .content-slide.intro-slide .right-section {
     padding-top: 0;
     padding-bottom: 0;
 }
 
 .content-slide.intro-slide .intro-section {
-    /* subtract the intro-section's own padding-top so the first line aligns */
-    margin-top: max(0px, calc(var(--tv-top-offset) - 30px));
+    margin-top: 0px;
 }
 
 /* Align Achievements section start with the TV frame's top edge on the left (all screens) */
@@ -510,6 +531,331 @@ body {
     padding-right: 20px;
     padding-bottom: 0;
     justify-content: center;
+}
+
+.content-slide.design-process-slide {
+    align-items: flex-start;
+}
+
+.content-slide.design-process-slide .right-section {
+    align-items: center;
+    justify-content: flex-start; /* Start content at top instead of centering */
+    padding: 40px 100px 60px 100px;
+    gap: 14px;
+}
+
+.design-process-graph {
+    width: 100%;
+    margin: 10px 0 6px 0;
+    padding: 8px 2px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    min-height: 280px; /* Ensure container has space for SVG */
+}
+
+.dp-svg {
+    width: 100%;
+    /* Some browsers collapse inline SVGs when height is auto; enforce a visible box */
+    aspect-ratio: 1400 / 360;
+    height: 280px; /* Explicit height to prevent collapse */
+    min-height: 280px;
+    max-height: 380px;
+    display: block;
+    min-width: 980px; /* keep labels readable; container allows horizontal scroll on small screens */
+}
+
+/* Chalk styling */
+.dp-path {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.dp-arrow {
+    stroke: rgba(255, 215, 0, 0.85);
+    stroke-width: 4;
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.12));
+}
+
+.dp-arrowhead {
+    fill: rgba(255, 215, 0, 0.85);
+}
+
+.dp-circle {
+    fill: rgba(0, 0, 0, 0.22);
+    stroke: rgba(255, 255, 255, 0.72);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.08));
+}
+
+.dp-circle-soft {
+    stroke: rgba(255, 255, 255, 0.25);
+    stroke-width: 7;
+    filter: blur(0.6px);
+}
+
+.dp-text {
+    font-family: 'Handlee', cursive;
+    font-size: 28px;
+    fill: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.2px;
+    user-select: none;
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+}
+
+/* Entry animation: chalk draw + gentle node fade-in
+   IMPORTANT: keep the diagram visible even if animations don't run. */
+.dp-draw {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+}
+
+.dp-node {
+    opacity: 0;
+    transform: scale(0);
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 220ms ease, filter 220ms ease;
+    cursor: none;
+}
+
+/* Animate only when the Design Process slide is active */
+.content-slide.design-process-slide.active .dp-draw {
+    stroke-dasharray: 1400;
+    stroke-dashoffset: 1400;
+    animation: dpChalkDraw 1.25s ease forwards;
+    animation-delay: var(--dp-delay, 0s);
+}
+
+.content-slide.design-process-slide.active .dp-node {
+    animation: dpNodeIn 600ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    animation-delay: var(--dp-delay, 0s);
+}
+
+@keyframes dpChalkDraw {
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes dpNodeIn {
+    from {
+        opacity: 0;
+        transform: scale(0);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .content-slide.design-process-slide.active .dp-draw,
+    .content-slide.design-process-slide.active .dp-node {
+        animation: none !important;
+        stroke-dasharray: none !important;
+        stroke-dashoffset: 0 !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+/* Hover + focus interactions */
+.dp-node:hover,
+.dp-node:focus-visible {
+    filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.10));
+    transform: scale(1.03);
+}
+
+.dp-node:hover .dp-circle,
+.dp-node:focus-visible .dp-circle {
+    stroke: rgba(255, 255, 255, 0.92);
+}
+
+.dp-node:hover .dp-text,
+.dp-node:focus-visible .dp-text {
+    fill: rgba(255, 215, 0, 0.95);
+}
+
+.dp-node:focus-visible {
+    outline: none;
+}
+
+.principles-heading {
+    font-family: 'Handlee', cursive;
+    font-size: 32px;
+    color: rgba(255, 255, 255, 0.95);
+    margin-top: 40px;
+    margin-bottom: 32px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    width: 100%;
+    text-align: center;
+}
+
+/* Principles Card Stack Container */
+.principles-card-stack-container {
+    width: 100%;
+    max-width: 1200px; /* allow 4 cards to fit on one row on desktop */
+    /* spacing between header and cards is controlled by .principles-heading margin-bottom */
+    margin: 0 auto;
+    padding: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    perspective: none;
+    overflow: visible; /* avoid clipping rotated cards/glow */
+}
+
+/* Principles Cards Row */
+.principles-card-stack {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap; /* keep 4 cards on a single row */
+    gap: 24px;
+    align-items: stretch;
+    justify-content: center;
+    overflow: visible; /* keep rotated corners + glow visible */
+    padding: 22px 6px 14px 6px; /* room for rotated corners/glow */
+}
+
+.principle-item {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 25px 30px;
+    border: 2.5px solid rgba(255, 255, 255, 0.8);
+    border-radius: 22px;
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.95);
+    position: relative;
+    transform-origin: center center;
+    /* Chalk glow and hand-drawn effect */
+    box-shadow: 
+        /* Main border with slight offset for hand-drawn look */
+        0.5px 0.5px 0 0 rgba(255, 255, 255, 0.6),
+        -0.5px -0.5px 0 0 rgba(255, 255, 255, 0.6),
+        1px 1px 0 0 rgba(255, 255, 255, 0.4),
+        -1px -1px 0 0 rgba(255, 255, 255, 0.4),
+        /* Chalk glow effect */
+        0 0 8px rgba(255, 255, 255, 0.15),
+        0 0 16px rgba(255, 255, 255, 0.08),
+        /* Inner subtle glow */
+        inset 0 0 10px rgba(255, 255, 255, 0.05),
+        /* Card shadow for depth */
+        0 4px 20px rgba(0, 0, 0, 0.5);
+    /* Chalk texture blur */
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.12));
+    /* Base transform uses per-card rotation var so we can animate/hover cleanly */
+    transform: translateY(0) rotate(var(--card-rot, 0deg)) scale(1);
+    opacity: 1;
+    transition: transform 420ms ease-in-out,
+                box-shadow 420ms ease-in-out,
+                filter 420ms ease-in-out;
+    cursor: none;
+    will-change: transform, box-shadow, filter;
+    overflow: hidden;
+    /* Enter animation (staggered via nth-child delays below)
+       Use `backwards` so the animation doesn't keep overriding hover styles after it finishes. */
+    animation: principlesCardEnter 720ms ease-in-out backwards;
+}
+
+@keyframes principlesCardEnter {
+    from {
+        opacity: 0;
+        transform: translateY(28px) rotate(0deg) scale(0.96);
+        filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) rotate(var(--card-rot, 0deg)) scale(1);
+        filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.12));
+    }
+}
+
+/* Card angles (in order): 20, -10, 30, -20) + staggered enter delays */
+.principles-card-stack .principle-item:nth-child(1) { --card-rot: 20deg;  animation-delay: 0ms; }
+.principles-card-stack .principle-item:nth-child(2) { --card-rot: -10deg; animation-delay: 120ms; }
+.principles-card-stack .principle-item:nth-child(3) { --card-rot: 30deg;  animation-delay: 240ms; }
+.principles-card-stack .principle-item:nth-child(4) { --card-rot: -20deg; animation-delay: 360ms; }
+
+/* Hover: glow behind + straighten to 0deg */
+.principles-card-stack .principle-item:hover {
+    transform: translateY(-2px) rotate(0deg) scale(1.02);
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.18))
+            drop-shadow(0 0 22px rgba(255, 215, 0, 0.14));
+    box-shadow:
+        0.5px 0.5px 0 0 rgba(255, 255, 255, 0.7),
+        -0.5px -0.5px 0 0 rgba(255, 255, 255, 0.7),
+        1px 1px 0 0 rgba(255, 255, 255, 0.5),
+        -1px -1px 0 0 rgba(255, 255, 255, 0.5),
+        0 0 18px rgba(255, 255, 255, 0.22),
+        0 0 34px rgba(255, 215, 0, 0.12),
+        inset 0 0 10px rgba(255, 255, 255, 0.06),
+        0 10px 28px rgba(0, 0, 0, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .principle-item {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* Hand-drawn outer border layer with slight blur */
+.principle-item::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 1.5px solid rgba(255, 255, 255, 0.5);
+    border-radius: 24px;
+    pointer-events: none;
+    filter: blur(1px);
+    opacity: 0.7;
+    /* Slight offset for hand-drawn irregularity */
+    transform: translate(0.4px, -0.3px);
+}
+
+/* Inner chalk highlight */
+.principle-item::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 18px;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.principle-item:last-child {
+    border-bottom: 2.5px solid rgba(255, 255, 255, 0.8);
+}
+
+.principle-title {
+    font-family: 'Handlee', cursive;
+    font-size: 26px;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 8px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.16);
+}
+
+.principle-text {
+    font-family: 'Handlee', cursive;
+    font-size: 20px;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.78);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.08);
+    max-width: 100%;
 }
 
 .intro-title {
@@ -555,6 +901,13 @@ body {
     letter-spacing: 0.2px;
 }
 
+/* Highlight color without glow (used for separators like '|') */
+.pipe-highlight {
+    color: rgba(255, 215, 0, 0.95);
+    text-shadow: none !important;
+    font-weight: 600;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .container {
@@ -580,6 +933,24 @@ body {
 
     .nav-item {
         font-size: 20px;
+    }
+
+    .principles-card-stack-container {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* On narrower screens, keep single row but allow horizontal scroll (no clipping vertically) */
+    .principles-card-stack {
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 18px; /* room for scrollbar */
+    }
+
+    .principle-item {
+        flex: 0 0 260px;
+        min-width: 260px;
     }
 }
 
@@ -633,6 +1004,23 @@ body {
     .intro-text {
         font-size: 18px;
     }
+
+    .principles-card-stack-container {
+        max-width: 100%;
+        height: auto;
+        margin-top: 0;
+    }
+
+    .principle-item {
+        padding: 20px 25px;
+        max-width: 100%;
+    }
+
+    .principles-heading {
+        font-size: 28px;
+        margin-top: 30px;
+        margin-bottom: 20px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -665,9 +1053,48 @@ body {
     width: 100%;
 }
 
-/* Achievements slide: reduce header wrapper height */
-.content-slide.achievements-slide .achievements-header > div {
+/* Experience: stack title + subtitle like Achievements layout (no carousel) */
+.content-slide.experience-slide .achievements-header {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.content-slide.experience-slide .section-title {
+    margin-bottom: 0;
+    justify-content: flex-start;
+    text-align: left;
+}
+
+.content-slide.experience-slide .section-subtitle {
+    margin: 0;
+    font-size: 28px;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    text-align: left;
+    width: 100%;
+}
+
+.experience-body {
+    margin: 0 0 18px 0;
+    font-family: 'Handlee', cursive;
+    font-size: 20px;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.78);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.08);
+    width: 100%;
+    text-align: left;
+}
+
+/* Achievements slide: subtitle in header (match intro-name glow, compact height) */
+.content-slide.achievements-slide .achievements-header > .section-subtitle {
     height: 32px;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    font-size: 28px;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 .section-title {
@@ -679,7 +1106,9 @@ body {
     width: 100%;
     height: fit-content;
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 .section-subtitle {
@@ -832,6 +1261,24 @@ body {
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.08);
 }
 
+/* Achievements accordion: trophy icon to the left of each title */
+.content-slide.achievements-slide .accordion-trigger .accordion-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0; /* allow text to wrap */
+}
+
+.content-slide.achievements-slide .accordion-trigger .accordion-title::before {
+    content: "";
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+    background: url("Icons/trophy.png") no-repeat center / contain;
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.25));
+    opacity: 0.95;
+}
+
 .accordion-trigger:hover .accordion-title {
     color: rgba(255, 215, 0, 0.95);
     text-shadow: 0 0 10px rgba(255, 215, 0, 0.18);
@@ -856,7 +1303,25 @@ body {
 }
 
 .accordion-panel {
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: max-height 0.4s ease, opacity 0.25s ease, transform 0.25s ease;
+    will-change: max-height;
+}
+
+.accordion-item.is-open .accordion-panel {
     padding: 4px 0 0 0;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .accordion-panel {
+        transition: none;
+    }
 }
 
 .accordion-text {
