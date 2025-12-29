@@ -42,7 +42,16 @@
                             playsinline
                             preload="auto"
                         ></video>
-                        <img src="Hero images/hero-trophy-1.png" alt="Hero Trophy" class="hero-image" id="heroImage2">
+                        <video
+                            src="Hero images/Achievements.mp4"
+                            class="hero-image"
+                            id="heroImage2"
+                            autoplay
+                            loop
+                            muted
+                            playsinline
+                            preload="auto"
+                        ></video>
                     </div>
                     <img src="Hero images/tvframe.png" alt="TV Frame" class="tv-frame-img">
                 </div>
@@ -634,12 +643,18 @@
                 if (heroImage1 && heroImage1.tagName === 'VIDEO') {
                     try { heroImage1.pause(); } catch (e) {}
                 }
+                if (heroImage2 && heroImage2.tagName === 'VIDEO') {
+                    heroImage2.play().catch(() => {});
+                }
             } else {
                 heroImage1.classList.add('active');
                 heroImage2.classList.remove('active');
                 if (heroImage1 && heroImage1.tagName === 'VIDEO') {
                     // Autoplay policies can block play() unless muted (we set muted), so ignore failures.
                     heroImage1.play().catch(() => {});
+                }
+                if (heroImage2 && heroImage2.tagName === 'VIDEO') {
+                    try { heroImage2.pause(); } catch (e) {}
                 }
             }
 
@@ -926,9 +941,31 @@
                 figma: ['design-system', 'clickable-prototypes'],
             };
 
+            // Reverse mapping: word -> tools (so hovering an outcome highlights its mapped tools)
+            const toolsByWord = new Map();
+            Object.entries(mapping).forEach(([toolKey, wordKeys]) => {
+                (wordKeys || []).forEach((w) => {
+                    if (!toolsByWord.has(w)) toolsByWord.set(w, new Set());
+                    toolsByWord.get(w).add(toolKey);
+                });
+            });
+
+            // Make words keyboard-focusable (without cluttering HTML)
+            wordEls.forEach((el) => {
+                if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+                if (!el.hasAttribute('role')) el.setAttribute('role', 'button');
+                if (!el.hasAttribute('aria-label')) {
+                    const label = (el.textContent || '').trim();
+                    el.setAttribute('aria-label', label ? `Outcome: ${label}` : 'Outcome');
+                }
+            });
+
             const clear = () => {
                 toolButtons.forEach((btn) => btn.classList.remove('is-active'));
-                wordEls.forEach((el) => el.classList.remove('is-highlighted'));
+                wordEls.forEach((el) => {
+                    el.classList.remove('is-highlighted');
+                    el.classList.remove('is-active-word');
+                });
             };
 
             const activate = (toolKey) => {
@@ -940,6 +977,22 @@
                 keys.forEach((k) => {
                     const el = wordByKey.get(k);
                     if (el) el.classList.add('is-highlighted');
+                });
+            };
+
+            const activateWord = (wordKey) => {
+                clear();
+                const wordEl = wordByKey.get(wordKey);
+                if (wordEl) {
+                    wordEl.classList.add('is-highlighted');
+                    wordEl.classList.add('is-active-word');
+                }
+
+                const tools = toolsByWord.get(wordKey);
+                if (!tools) return;
+                tools.forEach((toolKey) => {
+                    const btn = section.querySelector(`.tool-logo-btn[data-tool="${toolKey}"]`);
+                    if (btn) btn.classList.add('is-active');
                 });
             };
 
@@ -956,15 +1009,190 @@
                 btn.addEventListener('touchstart', () => activate(toolKey), { passive: true });
             });
 
+            wordEls.forEach((el) => {
+                const wordKey = el.dataset.word;
+                if (!wordKey) return;
+
+                el.addEventListener('mouseenter', () => activateWord(wordKey));
+                el.addEventListener('mouseleave', () => clear());
+                el.addEventListener('focus', () => activateWord(wordKey));
+                el.addEventListener('blur', () => clear());
+                el.addEventListener('touchstart', () => activateWord(wordKey), { passive: true });
+
+                // Keyboard: activate on Enter/Space
+                el.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        activateWord(wordKey);
+                    }
+                });
+            });
+
             section.addEventListener('mouseleave', () => clear());
             section.addEventListener('touchstart', (e) => {
                 const target = e.target;
                 if (!(target instanceof Element)) return;
-                if (!target.closest('.tool-logo-btn')) clear();
+                if (!target.closest('.tool-logo-btn') && !target.closest('.tools-word')) clear();
             }, { passive: true });
         }
 
         // Tools Used: layout word cloud with collision avoidance (no overlaps)
+        function initToolsUsedToolCloudLayout() {
+            const section = document.querySelector('.tools-used-section');
+            if (!section) return;
+
+            const logos = section.querySelector('.tools-used-logos');
+            if (!logos) return;
+
+            const debounce = (fn, waitMs) => {
+                let t;
+                return (...args) => {
+                    window.clearTimeout(t);
+                    t = window.setTimeout(() => fn(...args), waitMs);
+                };
+            };
+
+            const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+            const rectsOverlap = (a, b, gap) => !(
+                a.right + gap <= b.left ||
+                a.left >= b.right + gap ||
+                a.bottom + gap <= b.top ||
+                a.top >= b.bottom + gap
+            );
+
+            function layoutOnce() {
+                const btns = Array.from(logos.querySelectorAll('.tool-logo-btn'));
+                if (!btns.length) return true;
+
+                const cw = logos.clientWidth;
+                const ch = logos.clientHeight;
+                if (!cw || !ch) return true;
+
+                // More breathing room between logos (also reduces overlap when hover scales up)
+                const padding = 16;
+                const gap = 22;
+
+                // Measure buttons (center them so transforms apply consistently)
+                btns.forEach((btn) => {
+                    btn.style.visibility = 'hidden';
+                    btn.style.setProperty('--x', (cw / 2) + 'px');
+                    btn.style.setProperty('--y', (ch / 2) + 'px');
+                });
+
+                // Force layout
+                // eslint-disable-next-line no-unused-expressions
+                logos.offsetHeight;
+
+                const items = btns.map((btn, idx) => {
+                    const r = btn.getBoundingClientRect();
+                    return {
+                        el: btn,
+                        idx,
+                        w: r.width,
+                        h: r.height,
+                        area: r.width * r.height,
+                    };
+                }).sort((a, b) => b.area - a.area);
+
+                btns.forEach((btn) => { btn.style.visibility = ''; });
+
+                const placed = [];
+                const cx = cw / 2;
+                const cy = ch / 2;
+                const maxAttempts = 1600;
+                const angleStep = 0.6;
+                const radiusStep = 10;
+
+                for (const item of items) {
+                    const halfW = item.w / 2;
+                    const halfH = item.h / 2;
+
+                    const minX = padding + halfW;
+                    const maxX = cw - padding - halfW;
+                    const minY = padding + halfH;
+                    const maxY = ch - padding - halfH;
+                    if (minX > maxX || minY > maxY) return false;
+
+                    let found = false;
+                    const seed = (item.idx + 1) * 1.61;
+
+                    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                        const angle = attempt * angleStep + seed;
+                        const radius = radiusStep * Math.sqrt(attempt);
+
+                        let x = cx + radius * Math.cos(angle);
+                        let y = cy + radius * Math.sin(angle);
+
+                        x = clamp(x, minX, maxX);
+                        y = clamp(y, minY, maxY);
+
+                        const rect = {
+                            left: x - halfW,
+                            top: y - halfH,
+                            right: x + halfW,
+                            bottom: y + halfH,
+                        };
+
+                        let overlaps = false;
+                        for (const p of placed) {
+                            if (rectsOverlap(rect, p, gap)) {
+                                overlaps = true;
+                                break;
+                            }
+                        }
+                        if (overlaps) continue;
+
+                        item.el.style.setProperty('--x', x + 'px');
+                        item.el.style.setProperty('--y', y + 'px');
+                        placed.push(rect);
+                        found = true;
+                        break;
+                    }
+
+                    if (!found) return false;
+                }
+
+                return true;
+            }
+
+            function layoutWithScaleFallback() {
+                // Try a few scales (helps on smaller widths so we can still guarantee no overlap)
+                const scales = [1, 0.96, 0.92, 0.88, 0.84, 0.80, 0.76];
+                for (const s of scales) {
+                    logos.style.setProperty('--tool-scale', String(s));
+                    // Force layout before measuring/placing
+                    // eslint-disable-next-line no-unused-expressions
+                    logos.offsetHeight;
+                    if (layoutOnce()) return;
+                }
+            }
+
+            const run = () => {
+                if (!logos.clientWidth || !logos.clientHeight) return;
+                layoutWithScaleFallback();
+            };
+
+            const runDebounced = debounce(run, 150);
+
+            const start = () => {
+                run();
+                window.addEventListener('resize', runDebounced, { passive: true });
+                if (window.ResizeObserver) {
+                    const ro = new ResizeObserver(() => runDebounced());
+                    ro.observe(logos);
+                }
+            };
+
+            // Ensure images are decoded so measurements are accurate
+            const imgs = Array.from(logos.querySelectorAll('img'));
+            const decodePromises = imgs.map((img) => {
+                if (img && typeof img.decode === 'function') return img.decode().catch(() => {});
+                return Promise.resolve();
+            });
+
+            Promise.all(decodePromises).then(() => window.requestAnimationFrame(start));
+        }
+
         function initToolsUsedWordCloudLayout() {
             const section = document.querySelector('.tools-used-section');
             if (!section) return;
@@ -1130,6 +1358,7 @@
         }
 
         initToolsUsedWordMapping();
+        initToolsUsedToolCloudLayout();
         initToolsUsedWordCloudLayout();
 
         // Principles cards are now static (no stack / navigation JS needed).
