@@ -310,7 +310,12 @@ body {
 
 /* Photo hero can get its head cropped with object-fit: cover; bias toward top */
 #heroImage1 {
-    object-position: center top;
+    /* Hero is now a video sized to the TV screen; keep it centered and un-cropped */
+    object-fit: contain;
+    object-position: center;
+    width: 100%;
+    height: 100%;
+    left: 0px;
 }
 
 .image-placeholder {
@@ -540,8 +545,8 @@ body.design-process-mode .right-content-container {
 .content-slide.design-process-slide .right-section {
     align-items: center;
     justify-content: flex-start; /* Start content at top instead of centering */
-    /* Extra bottom padding adds scroll runway so the slide doesn't immediately advance to Projects */
-    padding: 40px 100px 200px 100px;
+    /* Smaller bottom runway; gesture-aware boundary logic prevents accidental slide advance */
+    padding: 40px 100px 120px 100px;
     gap: 14px;
 }
 

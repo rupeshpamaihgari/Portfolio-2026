@@ -32,7 +32,16 @@
             <div class="left-section">
                 <div class="hero-image-wrapper">
                     <div class="tv-screen">
-                        <img src="Hero images/hero-image.jpg" alt="Hero" class="hero-image active" id="heroImage1">
+                        <video
+                            src="Hero images/HeroImageVideo.mp4"
+                            class="hero-image active"
+                            id="heroImage1"
+                            autoplay
+                            loop
+                            muted
+                            playsinline
+                            preload="auto"
+                        ></video>
                         <img src="Hero images/hero-trophy-1.png" alt="Hero Trophy" class="hero-image" id="heroImage2">
                     </div>
                     <img src="Hero images/tvframe.png" alt="TV Frame" class="tv-frame-img">
@@ -622,9 +631,16 @@
             if (newSlide === 1) {
                 heroImage1.classList.remove('active');
                 heroImage2.classList.add('active');
+                if (heroImage1 && heroImage1.tagName === 'VIDEO') {
+                    try { heroImage1.pause(); } catch (e) {}
+                }
             } else {
                 heroImage1.classList.add('active');
                 heroImage2.classList.remove('active');
+                if (heroImage1 && heroImage1.tagName === 'VIDEO') {
+                    // Autoplay policies can block play() unless muted (we set muted), so ignore failures.
+                    heroImage1.play().catch(() => {});
+                }
             }
 
             currentContentSlide = newSlide;
@@ -677,23 +693,81 @@
 
         // Wheel scroll handling
         let scrollTimeout;
+        // For slides with internal scroll: when user reaches top/bottom *during a swipe gesture*,
+        // stop at the edge (do not advance). If the user starts a *new* swipe while already at
+        // the edge, then advance to the next/prev section immediately.
+        let wheelGestureEndTimer = null;
+        let gestureSlideIndex = -1;
+        let gestureDir = 0; // 1 (down) | -1 (up)
+        let gestureStartedAtBoundary = false;
+        const WHEEL_GESTURE_END_MS = 160;
+
         mainContainer.addEventListener('wheel', (e) => {
             // Allow native scrolling within full-width sections (Design Process + Projects + Contact).
             const activeSlide = slides[currentContentSlide];
-            if (activeSlide && (activeSlide.classList.contains('design-process-slide') || activeSlide.classList.contains('projects-slide') || activeSlide.classList.contains('contact-slide'))) {
+            const isScrollableSlide =
+                activeSlide &&
+                (activeSlide.classList.contains('design-process-slide') ||
+                    activeSlide.classList.contains('projects-slide') ||
+                    activeSlide.classList.contains('contact-slide'));
+
+            if (isScrollableSlide) {
                 // Contact slide scrolls on the slide itself, others use .right-section
-                const scrollEl = activeSlide.classList.contains('contact-slide') 
-                    ? activeSlide 
+                const scrollEl = activeSlide.classList.contains('contact-slide')
+                    ? activeSlide
                     : activeSlide.querySelector('.right-section');
+
                 if (scrollEl && scrollEl.scrollHeight > scrollEl.clientHeight) {
                     const atTop = scrollEl.scrollTop <= 0;
                     const atBottom = scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 1;
+                    const dir = e.deltaY > 0 ? 1 : -1;
+                    const isAtBoundary = (dir < 0 && atTop) || (dir > 0 && atBottom);
+
+                    // Determine whether this wheel event belongs to a new gesture (swipe).
+                    const isNewGesture =
+                        wheelGestureEndTimer === null ||
+                        gestureSlideIndex !== currentContentSlide ||
+                        gestureDir !== dir;
+
+                    if (isNewGesture) {
+                        gestureSlideIndex = currentContentSlide;
+                        gestureDir = dir;
+                        gestureStartedAtBoundary = isAtBoundary;
+                    }
+
+                    clearTimeout(wheelGestureEndTimer);
+                    wheelGestureEndTimer = setTimeout(() => {
+                        wheelGestureEndTimer = null;
+                        gestureSlideIndex = -1;
+                        gestureDir = 0;
+                        gestureStartedAtBoundary = false;
+                    }, WHEEL_GESTURE_END_MS);
 
                     // If we can scroll within the panel, let the browser handle it.
-                    if ((e.deltaY < 0 && !atTop) || (e.deltaY > 0 && !atBottom)) {
+                    if (!isAtBoundary) {
                         return;
                     }
+
+                    // We're at the boundary.
+                    // - If we reached the boundary mid-gesture, stop here (do NOT advance).
+                    // - If the gesture started at the boundary, allow section navigation.
+                    e.preventDefault();
+                    if (!gestureStartedAtBoundary) {
+                        clearTimeout(scrollTimeout);
+                        return;
+                    }
+                } else {
+                    // No internal scroll area => behave like non-scrollable slide
+                    wheelGestureEndTimer = null;
+                    gestureSlideIndex = -1;
+                    gestureDir = 0;
+                    gestureStartedAtBoundary = false;
                 }
+            } else {
+                wheelGestureEndTimer = null;
+                gestureSlideIndex = -1;
+                gestureDir = 0;
+                gestureStartedAtBoundary = false;
             }
 
             e.preventDefault();
