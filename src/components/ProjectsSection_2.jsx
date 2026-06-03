@@ -9,7 +9,7 @@ const CATEGORY_TABS = [
   { id: 'design-system',  label: 'Design System' },
   { id: 'mobile',         label: 'Mobile' },
   { id: 'arvr',           label: 'AR/VR' },
-  { id: 'vibe-codes',     label: 'Vibe Codes' },
+  { id: 'vibe-codes',     label: 'Vibe Coding' },
 ]
 
 const PLACEHOLDER_TABS = {

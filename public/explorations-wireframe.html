@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Workflow Builder — Lo-Fi Explorations</title>
+  <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Balsamiq Sans', 'Comic Sans MS', cursive;
+      background: #f0ede8;
+      color: #1a1a1a;
+    }
+
+    /* ── Shared screen layout ── */
+    .screen {
+      width: 960px;
+      min-height: 620px;
+      background: #faf8f5;
+      margin: 40px auto;
+      border: 2.5px solid #2a2a2a;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 6px 6px 0 #c5c0b8;
+      page-break-after: always;
+    }
+
+    /* ── Screen header ── */
+    .screen-header {
+      background: #2a2a2a;
+      color: #faf8f5;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .screen-header .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #888;
+      display: inline-block;
+    }
+    .screen-header .dot.r { background: #e06c5a; }
+    .screen-header .dot.y { background: #e0b45a; }
+    .screen-header .dot.g { background: #7ab87a; }
+    .screen-label {
+      margin-left: auto;
+      font-size: 11px;
+      opacity: 0.5;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* ── App chrome ── */
+    .app-chrome {
+      display: flex;
+      height: calc(100% - 38px);
+    }
+    .sidebar {
+      width: 180px;
+      min-height: 582px;
+      border-right: 2px solid #2a2a2a;
+      padding: 16px 12px;
+      background: #f5f2ed;
+    }
+    .sidebar-item {
+      padding: 8px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-bottom: 4px;
+      border: 1.5px solid transparent;
+      color: #555;
+    }
+    .sidebar-item.active {
+      background: #2a2a2a;
+      color: #faf8f5;
+    }
+    .sidebar-item:not(.active):hover { border-color: #bbb; }
+    .sidebar-section {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin: 16px 0 6px 10px;
+    }
+
+    .main {
+      flex: 1;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Sketch elements ── */
+    .sketch-box {
+      border: 2px solid #2a2a2a;
+      border-radius: 4px;
+      background: #fff;
+    }
+    .sketch-btn {
+      display: inline-block;
+      border: 2px solid #2a2a2a;
+      border-radius: 4px;
+      padding: 6px 16px;
+      font-family: 'Balsamiq Sans', cursive;
+      font-size: 12px;
+      background: #fff;
+      cursor: default;
+    }
+    .sketch-btn.primary {
+      background: #2a2a2a;
+      color: #faf8f5;
+    }
+    .sketch-input {
+      border: 2px solid #888;
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-family: 'Balsamiq Sans', cursive;
+      font-size: 12px;
+      background: #fff;
+      color: #555;
+    }
+    .sketch-label {
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .badge-red { background: rgba(224,108,90,0.12); color: #c0392b; border: 1.5px solid #e06c5a; }
+    .badge-gray { background: #f0ede8; color: #777; border: 1.5px solid #bbb; }
+    .badge-blue { background: rgba(90,130,224,0.1); color: #2c5faa; border: 1.5px solid #7aa2e0; }
+    .watermark {
+      position: absolute;
+      bottom: 16px;
+      right: 20px;
+      font-size: 11px;
+      color: #bbb;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Page title ── */
+    .page-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #2a2a2a;
+      margin-bottom: 4px;
+    }
+    .page-subtitle {
+      font-size: 11px;
+      color: #aaa;
+      margin-bottom: 20px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ──────────────────────────────────────────────────────
+       SCREEN 1 — Linear Timeline
+    ────────────────────────────────────────────────────── */
+    .timeline-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      position: relative;
+    }
+    .timeline-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .timeline-connector {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      padding-top: 18px;
+    }
+    .timeline-connector-line {
+      width: 32px;
+      height: 2px;
+      background: #aaa;
+      border-top: 2px dashed #aaa;
+    }
+    .timeline-connector-arrow {
+      font-size: 12px;
+      color: #888;
+      margin-left: -4px;
+    }
+    .timeline-circle {
+      width: 36px;
+      height: 36px;
+      border: 2.5px solid #2a2a2a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      background: #fff;
+    }
+    .timeline-circle.active {
+      background: #2a2a2a;
+      color: #faf8f5;
+    }
+    .timeline-circle.muted {
+      border-color: #ccc;
+      color: #ccc;
+    }
+    .timeline-step-label {
+      font-size: 10px;
+      margin-top: 6px;
+      color: #555;
+      text-align: center;
+      max-width: 72px;
+    }
+    .timeline-step-label.muted { color: #bbb; }
+    .overflow-hint {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border: 2px dashed #e06c5a;
+      border-radius: 6px;
+      background: rgba(224,108,90,0.05);
+      margin-top: 16px;
+      font-size: 11px;
+      color: #c0392b;
+    }
+
+    .step-detail-card {
+      border: 2px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 14px 16px;
+      background: #fff;
+      margin-top: 20px;
+      position: relative;
+    }
+    .step-detail-card .card-label {
+      position: absolute;
+      top: -11px;
+      left: 12px;
+      background: #faf8f5;
+      padding: 0 6px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* ──────────────────────────────────────────────────────
+       SCREEN 2 — Code-First DSL
+    ────────────────────────────────────────────────────── */
+    .code-editor {
+      border: 2px solid #2a2a2a;
+      border-radius: 6px;
+      overflow: hidden;
+      flex: 1;
+    }
+    .code-editor-bar {
+      background: #2a2a2a;
+      color: #aaa;
+      font-size: 11px;
+      padding: 6px 14px;
+      display: flex;
+      gap: 12px;
+    }
+    .code-editor-bar span.active { color: #faf8f5; border-bottom: 2px solid #7ab87a; padding-bottom: 2px; }
+    .code-body {
+      padding: 16px 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.8;
+      background: #f8f6f1;
+      min-height: 320px;
+    }
+    .code-line { display: flex; gap: 16px; }
+    .line-num { color: #ccc; min-width: 20px; user-select: none; }
+    .kw { color: #c0392b; }
+    .str { color: #27ae60; }
+    .key { color: #2980b9; }
+    .cmt { color: #aaa; font-style: italic; }
+    .val { color: #8e44ad; }
+    .error-bar {
+      background: rgba(224,108,90,0.1);
+      border-top: 2px solid #e06c5a;
+      padding: 8px 16px;
+      font-size: 11px;
+      color: #c0392b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ──────────────────────────────────────────────────────
+       SCREEN 3 — Wizard / Step-by-step
+    ────────────────────────────────────────────────────── */
+    .wizard-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 24px;
+    }
+    .wizard-step-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #aaa;
+    }
+    .wizard-step-item.done { color: #27ae60; }
+    .wizard-step-item.active { color: #2a2a2a; font-weight: 700; }
+    .wiz-circle {
+      width: 24px; height: 24px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .wizard-line { flex: 1; height: 1px; border-top: 2px dashed #ddd; min-width: 24px; margin: 0 4px; }
+    .wizard-card {
+      border: 2px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 20px 22px;
+      background: #fff;
+      min-height: 260px;
+    }
+    .form-row { margin-bottom: 14px; }
+    .wizard-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+    .hidden-hint {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: #e06c5a;
+      border: 2px dashed #e06c5a;
+      border-radius: 6px;
+      padding: 8px 14px;
+      background: rgba(224,108,90,0.05);
+      margin-top: 14px;
+    }
+
+    /* ── Accordion node canvas (Screen 1 redesign) ── */
+    .node-canvas {
+      flex: 1;
+      background: #f0ede8;
+      border: 2px dashed #ccc;
+      border-radius: 6px;
+      padding: 16px 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .acc-node {
+      width: 100%;
+      max-width: 520px;
+    }
+    .acc-node-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 2px solid #2a2a2a;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: default;
+      user-select: none;
+    }
+    .acc-node-header .node-icon {
+      width: 26px; height: 26px;
+      border: 2px solid #2a2a2a;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      background: #faf8f5;
+      flex-shrink: 0;
+    }
+    .acc-node-header .node-type {
+      flex: 1;
+    }
+    .acc-node-header .node-chevron {
+      font-size: 10px;
+      color: #aaa;
+    }
+    .acc-node-body {
+      border: 2px solid #2a2a2a;
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      background: #faf8f5;
+      padding: 12px 14px;
+      font-size: 11px;
+    }
+    .acc-node-body .body-row {
+      display: flex; gap: 12px; margin-bottom: 10px;
+    }
+    .acc-connector {
+      width: 2px;
+      height: 18px;
+      background: #aaa;
+      border-left: 2px dashed #aaa;
+      margin: 0 auto;
+      position: relative;
+    }
+    .acc-connector::after {
+      content: '▼';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 8px;
+      color: #aaa;
+    }
+    .acc-node-collapsed .acc-node-header {
+      border-color: #bbb;
+      color: #888;
+    }
+    .acc-node-collapsed .acc-node-header .node-icon {
+      border-color: #bbb;
+      opacity: 0.6;
+    }
+
+    /* ── Thumbnail card strip ── */
+    .card-strip-wrapper {
+      max-width: 960px;
+      margin: 40px auto 0;
+      padding: 0 0 8px;
+    }
+    .card-strip-header {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 16px;
+      padding-left: 2px;
+    }
+    .card-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .expl-card {
+      border: 2px solid #2a2a2a;
+      border-radius: 6px;
+      background: #faf8f5;
+      overflow: hidden;
+      box-shadow: 4px 4px 0 #c5c0b8;
+      cursor: zoom-in;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .expl-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 6px 6px 0 #a8a39a;
+    }
+    .thumb-viewport {
+      width: 100%;
+      height: 152px;
+      overflow: hidden;
+      background: #e8e4dc;
+      position: relative;
+      border-bottom: 2px solid #2a2a2a;
+    }
+    /* SVG thumbnail */
+    .thumb-viewport svg { display: block; width: 100%; height: 100%; }
+    .expl-card-body {
+      padding: 12px 14px 14px;
+    }
+    .expl-card-title {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #2a2a2a;
+    }
+    .expl-card-verdict {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1.5px solid #e06c5a;
+      background: rgba(224,108,90,0.08);
+      color: #c0392b;
+      margin-bottom: 8px;
+    }
+    .expl-card-reason {
+      font-size: 11px;
+      color: #777;
+      line-height: 1.5;
+      font-style: italic;
+    }
+    .expl-card-cta {
+      margin-top: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #aaa;
+    }
+
+    /* ── Annotation ── */
+    .annotation {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 11px;
+      color: #888;
+      font-style: italic;
+      margin-top: 6px;
+    }
+    .annotation::before { content: '✏️'; flex-shrink: 0; }
+
+    /* divider between screens */
+    .screen-divider {
+      text-align: center;
+      padding: 16px;
+      font-size: 11px;
+      color: #bbb;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── Zoomable screen wrapper ── */
+    .screen-zoomable {
+      cursor: zoom-in;
+      position: relative;
+      transition: box-shadow 0.2s ease, transform 0.15s ease;
+    }
+    .screen-zoomable:hover {
+      box-shadow: 8px 8px 0 #a8a39a, 0 0 0 2px rgba(42,42,42,0.2);
+      transform: translateY(-2px);
+    }
+    .zoom-hint {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(42,42,42,0.75);
+      color: #faf8f5;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      white-space: nowrap;
+      font-family: 'Balsamiq Sans', cursive;
+    }
+    .screen-zoomable:hover .zoom-hint { opacity: 1; }
+
+    /* ── Lightbox overlay ── */
+    #lb-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      animation: lbFadeIn 0.18s ease forwards;
+    }
+    #lb-overlay.open { display: flex; }
+    @keyframes lbFadeIn { from { opacity:0; } to { opacity:1; } }
+
+    #lb-frame {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #lb-inner {
+      transform-origin: center center;
+      will-change: transform;
+      border: 2.5px solid rgba(255,255,255,0.12);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    }
+
+    #lb-close {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
+      padding: 7px 18px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      z-index: 10001;
+      font-family: 'Balsamiq Sans', cursive;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(8px);
+    }
+    #lb-close:hover { background: rgba(255,255,255,0.2); }
+
+    #lb-controls {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 999px;
+      padding: 6px 16px;
+      backdrop-filter: blur(8px);
+      z-index: 10001;
+      color: #fff;
+      font-family: 'Balsamiq Sans', cursive;
+      font-size: 13px;
+    }
+    #lb-controls button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 0 6px;
+      line-height: 1;
+      opacity: 0.85;
+    }
+    #lb-controls button:hover { opacity: 1; }
+    #lb-zoom-label { min-width: 40px; text-align: center; opacity: 0.7; font-size: 12px; }
+
+    #lb-hint {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.4);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      font-family: 'Balsamiq Sans', cursive;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Lightbox overlay ── -->
+<div id="lb-overlay">
+  <div id="lb-hint">Scroll to zoom · Drag to pan · ESC to close</div>
+  <button id="lb-close">Close &nbsp;×</button>
+  <div id="lb-frame">
+    <div id="lb-inner"></div>
+  </div>
+  <div id="lb-controls">
+    <button id="lb-zoom-out">−</button>
+    <span id="lb-zoom-label">100%</span>
+    <button id="lb-zoom-in">+</button>
+    <span style="opacity:0.3;margin:0 4px;">|</span>
+    <button id="lb-reset" title="Reset zoom" style="font-size:13px;">↺ Reset</button>
+  </div>
+</div>
+
+<!-- ── Thumbnail card strip ── -->
+<div class="card-strip-wrapper">
+  <div class="card-strip-header">3 Directions Explored — All Killed in Favour of the Node Canvas</div>
+  <div class="card-strip">
+
+    <!-- Card 1: Accordion Canvas -->
+    <div class="expl-card" onclick="openLb(1)">
+      <div class="thumb-viewport">
+        <svg viewBox="0 0 300 152" xmlns="http://www.w3.org/2000/svg" font-family="'Balsamiq Sans', cursive">
+          <!-- bg -->
+          <rect width="300" height="152" fill="#f0ede8"/>
+          <!-- chrome bar -->
+          <rect width="300" height="22" fill="#2a2a2a"/>
+          <circle cx="12" cy="11" r="4" fill="#e06c5a"/><circle cx="24" cy="11" r="4" fill="#e0b45a"/><circle cx="36" cy="11" r="4" fill="#7ab87a"/>
+          <text x="50" y="15" fill="#faf8f5" font-size="8" font-weight="700">Accordion Node Canvas</text>
+          <text x="230" y="15" fill="#888" font-size="6" letter-spacing="0.05em">KILLED</text>
+          <!-- sidebar -->
+          <rect x="0" y="22" width="54" height="130" fill="#f5f2ed" stroke="#2a2a2a" stroke-width="1.5"/>
+          <rect x="4" y="30" width="46" height="12" rx="2" fill="#2a2a2a"/>
+          <text x="6" y="39" fill="#faf8f5" font-size="7">📋 Journeys</text>
+          <text x="6" y="53" fill="#888" font-size="7">📊 Reports</text>
+          <text x="6" y="65" fill="#888" font-size="7">👥 Candidates</text>
+          <!-- main area label -->
+          <text x="62" y="34" fill="#2a2a2a" font-size="8" font-weight="700">Build Workflow</text>
+          <text x="62" y="43" fill="#aaa" font-size="6">Node canvas — accordion style</text>
+          <!-- node 1 expanded -->
+          <rect x="62" y="49" width="228" height="26" rx="3" fill="#fff" stroke="#2a2a2a" stroke-width="1.5"/>
+          <rect x="66" y="53" width="18" height="18" rx="2" fill="#faf8f5" stroke="#2a2a2a" stroke-width="1"/>
+          <text x="68" y="65" font-size="10">⚡</text>
+          <text x="90" y="61" fill="#2a2a2a" font-size="7" font-weight="700">Trigger Node — Candidate Applied</text>
+          <text x="274" y="61" fill="#aaa" font-size="8">∧</text>
+          <!-- expanded body -->
+          <rect x="62" y="74" width="228" height="20" rx="3" fill="#faf8f5" stroke="#2a2a2a" stroke-width="1.5" stroke-dasharray="0"/>
+          <rect x="62" y="74" width="228" height="1" fill="#2a2a2a"/>
+          <text x="70" y="84" fill="#555" font-size="6">Event: <tspan fill="#2980b9">New Application</tspan>   ATS: <tspan fill="#2980b9">Bullhorn</tspan>   Filter: Status = Passive</text>
+          <!-- connector arrow -->
+          <line x1="176" y1="95" x2="176" y2="106" stroke="#aaa" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <polygon points="172,104 180,104 176,108" fill="#aaa"/>
+          <!-- node 2 collapsed -->
+          <rect x="62" y="108" width="228" height="18" rx="3" fill="#fff" stroke="#bbb" stroke-width="1.5"/>
+          <rect x="66" y="111" width="14" height="14" rx="2" fill="#faf8f5" stroke="#bbb" stroke-width="1" opacity="0.6"/>
+          <text x="68" y="121" font-size="9" opacity="0.5">💬</text>
+          <text x="86" y="121" fill="#888" font-size="7">SMS Node — Re-engagement message</text>
+          <text x="274" y="121" fill="#bbb" font-size="8">∨</text>
+          <!-- connector arrow -->
+          <line x1="176" y1="127" x2="176" y2="135" stroke="#ddd" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <polygon points="172,133 180,133 176,137" fill="#ddd"/>
+          <!-- node 3 collapsed faded -->
+          <rect x="62" y="137" width="228" height="12" rx="3" fill="#fff" stroke="#ddd" stroke-width="1" opacity="0.6"/>
+          <text x="70" y="146" fill="#ccc" font-size="6">⏱ Delay Node — 3 days …</text>
+        </svg>
+      </div>
+      <div class="expl-card-body">
+        <div class="expl-card-title">Direction 1 — Accordion Node Canvas</div>
+        <span class="expl-card-verdict">✕ Killed</span>
+        <div class="expl-card-reason">Nodes stacked vertically as accordions. All visible at once, but branching was invisible — a split looked identical to a sequence. No spatial logic.</div>
+        <div class="expl-card-cta">🔍 Click to zoom full screen</div>
+      </div>
+    </div>
+
+    <!-- Card 2: Code-First DSL -->
+    <div class="expl-card" onclick="openLb(2)">
+      <div class="thumb-viewport">
+        <svg viewBox="0 0 300 152" xmlns="http://www.w3.org/2000/svg" font-family="'Courier New', monospace">
+          <rect width="300" height="152" fill="#f0ede8"/>
+          <rect width="300" height="22" fill="#2a2a2a"/>
+          <circle cx="12" cy="11" r="4" fill="#e06c5a"/><circle cx="24" cy="11" r="4" fill="#e0b45a"/><circle cx="36" cy="11" r="4" fill="#7ab87a"/>
+          <text x="50" y="15" fill="#faf8f5" font-size="8" font-weight="700" font-family="'Balsamiq Sans', cursive">Code-First DSL Editor</text>
+          <text x="230" y="15" fill="#888" font-size="6" font-family="'Balsamiq Sans', cursive" letter-spacing="0.05em">KILLED</text>
+          <rect x="0" y="22" width="54" height="130" fill="#f5f2ed" stroke="#2a2a2a" stroke-width="1.5"/>
+          <text x="6" y="36" fill="#888" font-size="6" font-family="'Balsamiq Sans', cursive">📝 Editor</text>
+          <text x="6" y="48" fill="#888" font-size="6" font-family="'Balsamiq Sans', cursive">📋 Templates</text>
+          <text x="6" y="60" fill="#888" font-size="6" font-family="'Balsamiq Sans', cursive">📊 Runs</text>
+          <rect x="3" y="70" width="48" height="1" fill="#ddd"/>
+          <text x="6" y="82" fill="#ccc" font-size="6" font-family="'Balsamiq Sans', cursive">trigger:</text>
+          <text x="6" y="92" fill="#ccc" font-size="6" font-family="'Balsamiq Sans', cursive">sms_node:</text>
+          <text x="6" y="102" fill="#ccc" font-size="6" font-family="'Balsamiq Sans', cursive">delay:</text>
+          <!-- code editor area -->
+          <rect x="58" y="22" width="242" height="130" fill="#f8f6f1"/>
+          <rect x="58" y="22" width="242" height="14" fill="#1e1e1e"/>
+          <text x="62" y="31" fill="#aaa" font-size="6.5">workflow.yaml</text>
+          <text x="110" y="31" fill="#666" font-size="6.5">schema.json</text>
+          <text x="156" y="31" fill="#666" font-size="6.5">run_log.txt</text>
+          <!-- code lines -->
+          <text x="66" y="48" fill="#ccc" font-size="6.5">1</text><text x="76" y="48" fill="#2980b9" font-size="6.5">workflow</text><text x="108" y="48" fill="#333" font-size="6.5">:</text>
+          <text x="66" y="57" fill="#ccc" font-size="6.5">2</text><text x="82" y="57" fill="#2980b9" font-size="6.5">name</text><text x="100" y="57" fill="#333" font-size="6.5">: </text><text x="106" y="57" fill="#27ae60" font-size="6.5">"Auto-Submit Passive Candidates"</text>
+          <text x="66" y="66" fill="#ccc" font-size="6.5">3</text><text x="82" y="66" fill="#2980b9" font-size="6.5">trigger</text><text x="108" y="66" fill="#333" font-size="6.5">:</text>
+          <text x="66" y="75" fill="#ccc" font-size="6.5">4</text><text x="90" y="75" fill="#2980b9" font-size="6.5">type</text><text x="108" y="75" fill="#333" font-size="6.5">: </text><text x="114" y="75" fill="#8e44ad" font-size="6.5">scheduled</text>
+          <text x="66" y="84" fill="#ccc" font-size="6.5">5</text><text x="90" y="84" fill="#2980b9" font-size="6.5">cron</text><text x="108" y="84" fill="#333" font-size="6.5">: </text><text x="114" y="84" fill="#27ae60" font-size="6.5">"0 9 * * 1-5"</text>
+          <text x="66" y="93" fill="#ccc" font-size="6.5">6</text><text x="82" y="93" fill="#2980b9" font-size="6.5">nodes</text><text x="100" y="93" fill="#333" font-size="6.5">:</text>
+          <text x="66" y="102" fill="#ccc" font-size="6.5">7</text><text x="90" y="102" fill="#c0392b" font-size="6.5">-</text><text x="96" y="102" fill="#2980b9" font-size="6.5"> type</text><text x="116" y="102" fill="#333" font-size="6.5">: </text><text x="122" y="102" fill="#8e44ad" font-size="6.5">sms_node</text>
+          <text x="66" y="111" fill="#ccc" font-size="6.5">8</text><text x="96" y="111" fill="#2980b9" font-size="6.5">  condition</text><text x="134" y="111" fill="#333" font-size="6.5">: </text><text x="140" y="111" fill="#27ae60" font-size="6.5">"response == 'interested'"</text>
+          <!-- error bar -->
+          <rect x="58" y="132" width="242" height="20" fill="rgba(224,108,90,0.15)" stroke="#e06c5a" stroke-width="1"/>
+          <text x="64" y="145" fill="#c0392b" font-size="6.5" font-family="'Balsamiq Sans', cursive">✕ Line 8: Boolean syntax not supported — 2 validation errors</text>
+        </svg>
+      </div>
+      <div class="expl-card-body">
+        <div class="expl-card-title">Direction 2 — Code-First DSL (YAML)</div>
+        <span class="expl-card-verdict">✕ Killed</span>
+        <div class="expl-card-reason">9 of 10 recruiters in usability tests couldn't write a valid trigger. Locked out the "Busy Bee" persona entirely. Engineers loved it; everyone else didn't.</div>
+        <div class="expl-card-cta">🔍 Click to zoom full screen</div>
+      </div>
+    </div>
+
+    <!-- Card 3: Wizard -->
+    <div class="expl-card" onclick="openLb(3)">
+      <div class="thumb-viewport">
+        <svg viewBox="0 0 300 152" xmlns="http://www.w3.org/2000/svg" font-family="'Balsamiq Sans', cursive">
+          <rect width="300" height="152" fill="#f0ede8"/>
+          <rect width="300" height="22" fill="#2a2a2a"/>
+          <circle cx="12" cy="11" r="4" fill="#e06c5a"/><circle cx="24" cy="11" r="4" fill="#e0b45a"/><circle cx="36" cy="11" r="4" fill="#7ab87a"/>
+          <text x="50" y="15" fill="#faf8f5" font-size="8" font-weight="700">Wizard / Step-by-step</text>
+          <text x="230" y="15" fill="#888" font-size="6" letter-spacing="0.05em">KILLED</text>
+          <rect x="0" y="22" width="54" height="130" fill="#f5f2ed" stroke="#2a2a2a" stroke-width="1.5"/>
+          <rect x="4" y="30" width="46" height="12" rx="2" fill="#2a2a2a"/>
+          <text x="6" y="39" fill="#faf8f5" font-size="7">✨ New</text>
+          <text x="6" y="53" fill="#888" font-size="7">📋 My Flows</text>
+          <text x="6" y="65" fill="#888" font-size="7">📊 Analytics</text>
+          <!-- step progress -->
+          <text x="62" y="34" fill="#2a2a2a" font-size="8" font-weight="700">Create Workflow — Step 3 of 6</text>
+          <!-- wizard dots -->
+          <circle cx="72" cy="48" r="7" fill="#27ae60" stroke="#27ae60" stroke-width="1.5"/>
+          <text x="69" y="51" fill="#fff" font-size="7" font-weight="700">✓</text>
+          <line x1="79" y1="48" x2="93" y2="48" stroke="#ddd" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <circle cx="100" cy="48" r="7" fill="#27ae60" stroke="#27ae60" stroke-width="1.5"/>
+          <text x="97" y="51" fill="#fff" font-size="7" font-weight="700">✓</text>
+          <line x1="107" y1="48" x2="121" y2="48" stroke="#ddd" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <circle cx="128" cy="48" r="7" fill="#2a2a2a" stroke="#2a2a2a" stroke-width="1.5"/>
+          <text x="125" y="51" fill="#fff" font-size="7" font-weight="700">3</text>
+          <line x1="135" y1="48" x2="149" y2="48" stroke="#ddd" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <circle cx="156" cy="48" r="7" fill="#fff" stroke="#ccc" stroke-width="1.5"/>
+          <text x="153" y="51" fill="#ccc" font-size="7">4</text>
+          <line x1="163" y1="48" x2="177" y2="48" stroke="#ddd" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <circle cx="184" cy="48" r="7" fill="#fff" stroke="#ccc" stroke-width="1.5"/>
+          <text x="181" y="51" fill="#ccc" font-size="7">5</text>
+          <line x1="191" y1="48" x2="205" y2="48" stroke="#ddd" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <circle cx="212" cy="48" r="7" fill="#fff" stroke="#ccc" stroke-width="1.5"/>
+          <text x="209" y="51" fill="#ccc" font-size="7">6</text>
+          <!-- wizard card -->
+          <rect x="62" y="58" width="228" height="62" rx="3" fill="#fff" stroke="#2a2a2a" stroke-width="1.5"/>
+          <text x="70" y="70" fill="#aaa" font-size="6">Channel</text>
+          <rect x="70" y="73" width="80" height="12" rx="2" fill="#fff" stroke="#888" stroke-width="1"/>
+          <text x="74" y="82" fill="#555" font-size="6.5">SMS ▾</text>
+          <text x="164" y="70" fill="#aaa" font-size="6">Template</text>
+          <rect x="164" y="73" width="118" height="12" rx="2" fill="#fff" stroke="#888" stroke-width="1"/>
+          <text x="168" y="82" fill="#555" font-size="6.5">Passive re-engagement v2 ▾</text>
+          <text x="70" y="97" fill="#aaa" font-size="6">Message preview</text>
+          <rect x="70" y="100" width="212" height="14" rx="2" fill="#f9f7f4" stroke="#ccc" stroke-width="1"/>
+          <text x="74" y="110" fill="#888" font-size="6">Hi {{first_name}}, we have new roles in {{location}}…</text>
+          <!-- warning -->
+          <rect x="62" y="124" width="228" height="16" rx="3" fill="rgba(224,108,90,0.07)" stroke="#e06c5a" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <text x="68" y="135" fill="#c0392b" font-size="6.5">⚠ Steps 4–6 hidden — cannot plan branching until you reach those steps</text>
+          <!-- nav -->
+          <rect x="62" y="143" width="70" height="8" rx="2" fill="#fff" stroke="#2a2a2a" stroke-width="1"/>
+          <text x="70" y="149" fill="#2a2a2a" font-size="6">← Back</text>
+          <rect x="218" y="143" width="72" height="8" rx="2" fill="#2a2a2a"/>
+          <text x="224" y="149" fill="#faf8f5" font-size="6">Save &amp; Continue →</text>
+        </svg>
+      </div>
+      <div class="expl-card-body">
+        <div class="expl-card-title">Direction 3 — Wizard / Step-by-step</div>
+        <span class="expl-card-verdict">✕ Killed</span>
+        <div class="expl-card-reason">Ops managers repeatedly looped back to earlier steps after realising branching needed a different trigger. Felt like "onboarding", not authoring a system.</div>
+        <div class="expl-card-cta">🔍 Click to zoom full screen</div>
+      </div>
+    </div>
+
+  </div><!-- /.card-strip -->
+</div><!-- /.card-strip-wrapper -->
+
+<div class="screen-divider" style="padding-top:32px;">── Full Wireframe Explorations ──</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN 1 — Accordion Node Canvas
+══════════════════════════════════════════════════════════ -->
+<div class="screen screen-zoomable" data-lb="1" style="position:relative; min-height:660px;">
+  <div class="zoom-hint">🔍 Click to zoom in</div>
+  <div class="screen-header">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    &nbsp; Sense Workflows — Accordion Node Canvas
+    <span class="screen-label">Exploration 1 / 3 · Accordion Canvas · KILLED</span>
+  </div>
+  <div class="app-chrome">
+    <div class="sidebar">
+      <div class="sidebar-section">Workspace</div>
+      <div class="sidebar-item active">📋 Journeys</div>
+      <div class="sidebar-item">📊 Reports</div>
+      <div class="sidebar-item">👥 Candidates</div>
+      <div class="sidebar-section">Settings</div>
+      <div class="sidebar-item">⚙️ Config</div>
+      <div class="sidebar-item">🔔 Alerts</div>
+    </div>
+    <div class="main" style="padding:20px 24px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <div>
+          <div class="page-title">Build Workflow — Auto-Submit Passive Candidates</div>
+          <div class="page-subtitle">Nodes are stacked in sequence — expand any to configure</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <span class="sketch-btn">+ Add Node</span>
+          <span class="sketch-btn primary">▶ Activate</span>
+        </div>
+      </div>
+
+      <!-- Node canvas (accordion list) -->
+      <div class="node-canvas" style="max-height:440px;">
+
+        <!-- Node 1: Trigger — EXPANDED -->
+        <div class="acc-node">
+          <div class="acc-node-header">
+            <div class="node-icon">⚡</div>
+            <div class="node-type">
+              <div style="font-size:10px;color:#aaa;font-weight:400;text-transform:uppercase;letter-spacing:0.08em;">Trigger Node</div>
+              <div>Candidate Applied to Job</div>
+            </div>
+            <span class="badge badge-blue">Active</span>
+            <span class="node-chevron">▲</span>
+          </div>
+          <div class="acc-node-body">
+            <div class="body-row">
+              <div style="flex:1;">
+                <span class="sketch-label">Event</span>
+                <select class="sketch-input" style="width:100%;"><option>New Application Received</option></select>
+              </div>
+              <div style="flex:1;">
+                <span class="sketch-label">ATS Source</span>
+                <select class="sketch-input" style="width:100%;"><option>Bullhorn</option></select>
+              </div>
+            </div>
+            <div class="body-row" style="margin-bottom:0;">
+              <div style="flex:1;">
+                <span class="sketch-label">Candidate filter</span>
+                <input class="sketch-input" value="Status = Passive AND Skills ⊇ Java" style="width:100%;font-size:11px;" readonly />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-connector"></div>
+
+        <!-- Node 2: SMS — COLLAPSED -->
+        <div class="acc-node acc-node-collapsed">
+          <div class="acc-node-header">
+            <div class="node-icon">💬</div>
+            <div class="node-type">
+              <div style="font-size:10px;color:#bbb;font-weight:400;text-transform:uppercase;letter-spacing:0.08em;">SMS Node</div>
+              <div style="color:#888;">Re-engagement message — Passive v2</div>
+            </div>
+            <span class="node-chevron">▼</span>
+          </div>
+        </div>
+
+        <div class="acc-connector"></div>
+
+        <!-- Node 3: Delay — COLLAPSED -->
+        <div class="acc-node acc-node-collapsed">
+          <div class="acc-node-header">
+            <div class="node-icon">⏱</div>
+            <div class="node-type">
+              <div style="font-size:10px;color:#bbb;font-weight:400;text-transform:uppercase;letter-spacing:0.08em;">Delay Node</div>
+              <div style="color:#888;">Wait 3 days · Send 9 AM–5 PM</div>
+            </div>
+            <span class="node-chevron">▼</span>
+          </div>
+        </div>
+
+        <div class="acc-connector"></div>
+
+        <!-- Node 4: Condition — COLLAPSED (shows branching problem) -->
+        <div class="acc-node acc-node-collapsed" style="position:relative;">
+          <div class="acc-node-header">
+            <div class="node-icon">🔀</div>
+            <div class="node-type">
+              <div style="font-size:10px;color:#bbb;font-weight:400;text-transform:uppercase;letter-spacing:0.08em;">Condition Branch</div>
+              <div style="color:#888;">If replied "YES" → path A &nbsp;|&nbsp; else → path B</div>
+            </div>
+            <span class="node-chevron">▼</span>
+          </div>
+          <!-- branching problem annotation -->
+          <div style="position:absolute;right:-212px;top:4px;width:200px;border:1.5px dashed #e06c5a;border-radius:4px;padding:6px 8px;background:rgba(224,108,90,0.06);font-size:10px;color:#c0392b;line-height:1.4;">
+            ✏️ Branch looks identical to any other node — no visual split. "Path A" and "Path B" are invisible until expanded.
+          </div>
+        </div>
+
+        <div class="acc-connector"></div>
+
+        <!-- Node 5: ATS Update — COLLAPSED -->
+        <div class="acc-node acc-node-collapsed">
+          <div class="acc-node-header">
+            <div class="node-icon">🗃</div>
+            <div class="node-type">
+              <div style="font-size:10px;color:#bbb;font-weight:400;text-transform:uppercase;letter-spacing:0.08em;">ATS Node</div>
+              <div style="color:#888;">Update Status → Submitted</div>
+            </div>
+            <span class="node-chevron">▼</span>
+          </div>
+        </div>
+
+        <div class="acc-connector"></div>
+
+        <!-- Add node button -->
+        <div class="acc-node">
+          <div class="acc-node-header" style="border-style:dashed;border-color:#bbb;color:#bbb;justify-content:center;gap:6px;">
+            <span style="font-size:18px;line-height:1;">+</span>
+            <span style="font-size:12px;">Add Node</span>
+          </div>
+        </div>
+
+      </div><!-- /.node-canvas -->
+
+      <!-- Fatal flaw callout -->
+      <div class="overflow-hint" style="margin-top:14px;">
+        ⚠ Branching is architecturally invisible — a Condition Branch node looks identical to any other node when collapsed. The "Architect" persona cannot see parallel paths, loop-backs, or exit conditions without expanding every node individually. Complex flows with 8+ nodes become an unscrollable list with no spatial logic.
+      </div>
+      <div class="annotation" style="margin-top:8px;">All nodes visible at once, but the list metaphor collapses spatial branching into a flat stack. Tested with 6 ops managers: all could build a linear sequence correctly, but none could describe the branching flow without expanding every node first.</div>
+    </div>
+  </div>
+  <div class="watermark">Lo-Fi Exploration — Killed ✕</div>
+</div>
+
+<div class="screen-divider">── Exploration 2 of 3 ──</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN 2 — Code-First DSL
+══════════════════════════════════════════════════════════ -->
+<div class="screen screen-zoomable" data-lb="2" style="position:relative;">
+  <div class="zoom-hint">🔍 Click to zoom in</div>
+  <div class="screen-header">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    &nbsp; Sense Workflows — DSL Editor
+    <span class="screen-label">Exploration 2 / 3 · Code-First DSL · KILLED</span>
+  </div>
+  <div class="app-chrome">
+    <div class="sidebar">
+      <div class="sidebar-section">Navigation</div>
+      <div class="sidebar-item active">📝 Editor</div>
+      <div class="sidebar-item">📋 Templates</div>
+      <div class="sidebar-item">📊 Runs</div>
+      <div class="sidebar-item">📚 Docs</div>
+      <div class="sidebar-section">Snippets</div>
+      <div class="sidebar-item" style="font-size:11px;">trigger:</div>
+      <div class="sidebar-item" style="font-size:11px;">sms_node:</div>
+      <div class="sidebar-item" style="font-size:11px;">delay_node:</div>
+      <div class="sidebar-item" style="font-size:11px;">condition:</div>
+    </div>
+    <div class="main" style="gap:0;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div>
+          <div class="page-title">Workflow DSL Editor</div>
+          <div class="page-subtitle">Define your workflow using YAML configuration</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <span class="sketch-btn">Validate</span>
+          <span class="sketch-btn primary">▶ Run</span>
+        </div>
+      </div>
+
+      <div class="code-editor" style="flex:1;">
+        <div class="code-editor-bar">
+          <span class="active">workflow.yaml</span>
+          <span>schema.json</span>
+          <span>run_log.txt</span>
+        </div>
+        <div class="code-body">
+          <div class="code-line"><span class="line-num">1</span><span class="key">workflow</span><span>:</span></div>
+          <div class="code-line"><span class="line-num">2</span><span>&nbsp;&nbsp;</span><span class="key">name</span><span>: </span><span class="str">"Auto-Submit Passive Candidates"</span></div>
+          <div class="code-line"><span class="line-num">3</span><span>&nbsp;&nbsp;</span><span class="key">trigger</span><span>:</span></div>
+          <div class="code-line"><span class="line-num">4</span><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="key">type</span><span>: </span><span class="val">scheduled</span></div>
+          <div class="code-line"><span class="line-num">5</span><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="key">cron</span><span>: </span><span class="str">"0 9 * * 1-5"</span><span class="cmt"> &nbsp;# Mon–Fri 9am</span></div>
+          <div class="code-line"><span class="line-num">6</span><span>&nbsp;&nbsp;</span><span class="key">audience</span><span>:</span></div>
+          <div class="code-line"><span class="line-num">7</span><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="key">filter</span><span>:</span></div>
+          <div class="code-line"><span class="line-num">8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="key">status</span><span>: </span><span class="str">"passive"</span></div>
+          <div class="code-line"><span class="line-num">9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="key">last_contacted</span><span>: </span><span class="val">$gt</span><span>(</span><span class="str">"90d"</span><span>)</span></div>
+          <div class="code-line"><span class="line-num">10</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="key">skills</span><span>: </span><span class="str">"(Java OR Python) AND NOT (Status=Placed)"</span></div>
+          <div class="code-line"><span class="line-num">11</span><span>&nbsp;&nbsp;</span><span class="key">nodes</span><span>:</span></div>
+          <div class="code-line"><span class="line-num">12</span><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kw">- </span><span class="key">id</span><span>: </span><span class="str">sms_1</span></div>
+          <div class="code-line"><span class="line-num">13</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="key">type</span><span>: </span><span class="val">sms_node</span></div>
+          <div class="code-line"><span class="line-num">14</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="key">template_id</span><span>: </span><span class="str">"tmpl_4829a"</span></div>
+          <div class="code-line"><span class="line-num">15</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="key">next</span><span>:</span></div>
+          <div class="code-line"><span class="line-num">16</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="kw">- </span><span class="key">condition</span><span>: </span><span class="str">"response == 'interested'"</span></div>
+          <div class="code-line"><span class="line-num">17</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">goto</span><span>: </span><span class="val">delay_1</span></div>
+          <div class="code-line"><span class="line-num">18</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">- </span><span class="key">condition</span><span>: </span><span class="str">"response == 'no'"</span></div>
+          <div class="code-line"><span class="line-num">19</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">goto</span><span>: </span><span class="kw">END</span></div>
+        </div>
+        <div class="error-bar">
+          ✕ Line 10: Boolean expression syntax not supported in v2 filter schema &nbsp;|&nbsp; 2 validation errors found
+        </div>
+      </div>
+
+      <div class="annotation" style="margin-top:10px;">
+        Requires knowledge of YAML syntax, Boolean operators, cron expressions and internal schema IDs. 9 of 10 recruiters in usability tests could not write a valid trigger without help from engineering.
+      </div>
+    </div>
+  </div>
+  <div class="watermark">Lo-Fi Exploration — Killed ✕</div>
+</div>
+
+<div class="screen-divider">── Exploration 3 of 3 ──</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN 3 — Wizard / Step-by-step
+══════════════════════════════════════════════════════════ -->
+<div class="screen screen-zoomable" data-lb="3" style="position:relative;">
+  <div class="zoom-hint">🔍 Click to zoom in</div>
+  <div class="screen-header">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    &nbsp; Sense Workflows — Workflow Wizard
+    <span class="screen-label">Exploration 3 / 3 · Wizard / Step-by-step · KILLED</span>
+  </div>
+  <div class="app-chrome">
+    <div class="sidebar">
+      <div class="sidebar-section">Workspace</div>
+      <div class="sidebar-item active">✨ New Workflow</div>
+      <div class="sidebar-item">📋 My Workflows</div>
+      <div class="sidebar-item">📊 Analytics</div>
+      <div class="sidebar-section">Help</div>
+      <div class="sidebar-item">📖 Guide</div>
+      <div class="sidebar-item">💬 Support</div>
+    </div>
+    <div class="main">
+      <div class="page-title">Create Workflow — Step 3 of 6</div>
+      <div class="page-subtitle">Configure your first message node</div>
+
+      <!-- Wizard progress bar -->
+      <div class="wizard-steps">
+        <div class="wizard-step-item done">
+          <div class="wiz-circle">✓</div>
+          <span>Trigger</span>
+        </div>
+        <div class="wizard-line"></div>
+        <div class="wizard-step-item done">
+          <div class="wiz-circle">✓</div>
+          <span>Audience</span>
+        </div>
+        <div class="wizard-line"></div>
+        <div class="wizard-step-item active">
+          <div class="wiz-circle">3</div>
+          <span>Message</span>
+        </div>
+        <div class="wizard-line"></div>
+        <div class="wizard-step-item">
+          <div class="wiz-circle">4</div>
+          <span>Delay</span>
+        </div>
+        <div class="wizard-line"></div>
+        <div class="wizard-step-item">
+          <div class="wiz-circle">5</div>
+          <span>Branch</span>
+        </div>
+        <div class="wizard-line"></div>
+        <div class="wizard-step-item">
+          <div class="wiz-circle">6</div>
+          <span>Review</span>
+        </div>
+      </div>
+
+      <div class="wizard-card">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;">
+          <div class="form-row">
+            <span class="sketch-label">Channel</span>
+            <select class="sketch-input" style="width:100%;">
+              <option>SMS</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <span class="sketch-label">Template</span>
+            <select class="sketch-input" style="width:100%;">
+              <option>Passive re-engagement v2</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <span class="sketch-label">Message preview</span>
+          <div style="border:2px solid #ccc;border-radius:4px;padding:10px 12px;font-size:12px;color:#555;background:#f9f7f4;min-height:64px;line-height:1.6;">
+            Hi {{first_name}}, we have new {{job_type}} roles in {{location}} that match your profile. Interested? Reply YES.
+          </div>
+        </div>
+        <div class="form-row">
+          <span class="sketch-label">Send window</span>
+          <div style="display:flex;gap:8px;">
+            <input class="sketch-input" value="9:00 AM" style="width:100px;" readonly />
+            <span style="padding:6px 4px;font-size:12px;color:#888;">to</span>
+            <input class="sketch-input" value="5:00 PM" style="width:100px;" readonly />
+          </div>
+        </div>
+      </div>
+
+      <div class="hidden-hint">
+        ⚠ Steps 4–6 (Delay, Branch, ATS writeback) are hidden. Recruiters cannot see or plan ahead for branching logic until they reach those steps — leading to frequent "go back and change" loops.
+      </div>
+
+      <div class="wizard-nav">
+        <span class="sketch-btn">← Back to Audience</span>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:11px;color:#aaa;">Step 3 of 6</span>
+          <span class="sketch-btn primary">Save & Continue →</span>
+        </div>
+      </div>
+
+      <div class="annotation" style="margin-top:12px;">
+        Ops managers reported repeatedly going back to earlier steps after realising their branching strategy required a different trigger setup. Felt like "onboarding", not authoring a system.
+      </div>
+    </div>
+  </div>
+  <div class="watermark">Lo-Fi Exploration — Killed ✕</div>
+</div>
+
+<div style="text-align:center;padding:28px;font-size:11px;color:#aaa;letter-spacing:0.08em;">
+  SENSE WORKFLOWS — LO-FI DESIGN EXPLORATIONS &nbsp;·&nbsp; ALL THREE DIRECTIONS KILLED IN FAVOUR OF THE NODE CANVAS
+</div>
+
+<script>
+  (function () {
+    const overlay  = document.getElementById('lb-overlay');
+    const inner    = document.getElementById('lb-inner');
+    const frame    = document.getElementById('lb-frame');
+    const btnClose = document.getElementById('lb-close');
+    const btnZoomIn  = document.getElementById('lb-zoom-in');
+    const btnZoomOut = document.getElementById('lb-zoom-out');
+    const btnReset   = document.getElementById('lb-reset');
+    const zoomLabel  = document.getElementById('lb-zoom-label');
+
+    let zoom = 1;
+    let offset = { x: 0, y: 0 };
+    let dragging = false;
+    let dragStart = null;
+    let activeClone = null;
+
+    const CLAMP = (v) => Math.min(3, Math.max(0.3, Math.round(v * 100) / 100));
+
+    function applyTransform() {
+      inner.style.transform = `translate(${offset.x}px, ${offset.y}px) scale(${zoom})`;
+      zoomLabel.textContent = Math.round(zoom * 100) + '%';
+      frame.style.cursor = dragging ? 'grabbing' : (zoom > 1 ? 'grab' : 'default');
+    }
+
+    function openLightbox(screenEl) {
+      // Clone the screen content into the lightbox
+      const clone = screenEl.cloneNode(true);
+      // Remove the zoom-hint and watermark from clone so it's clean
+      clone.querySelectorAll('.zoom-hint, .watermark').forEach(n => n.remove());
+      clone.style.margin = '0';
+      clone.style.cursor = 'default';
+      clone.classList.remove('screen-zoomable');
+
+      inner.innerHTML = '';
+      inner.appendChild(clone);
+      activeClone = clone;
+
+      zoom = 1; offset = { x: 0, y: 0 };
+      applyTransform();
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+      inner.innerHTML = '';
+      activeClone = null;
+      zoom = 1; offset = { x: 0, y: 0 };
+    }
+
+    function zoomBy(delta) {
+      zoom = CLAMP(zoom + delta);
+      if (zoom <= 1) offset = { x: 0, y: 0 };
+      applyTransform();
+    }
+
+    // Click on screens
+    document.querySelectorAll('.screen-zoomable').forEach(el => {
+      el.addEventListener('click', () => openLightbox(el));
+    });
+
+    // Global helper for card-strip onclick
+    window.openLb = function(n) {
+      const target = document.querySelector(`.screen-zoomable[data-lb="${n}"]`);
+      if (target) openLightbox(target);
+    };
+
+    // Controls
+    btnClose.addEventListener('click', close);
+    btnZoomIn.addEventListener('click', () => zoomBy(0.25));
+    btnZoomOut.addEventListener('click', () => zoomBy(-0.25));
+    btnReset.addEventListener('click', () => { zoom = 1; offset = { x: 0, y: 0 }; applyTransform(); });
+
+    // Click backdrop to close
+    overlay.addEventListener('click', (e) => { if (e.target === overlay || e.target === frame) close(); });
+
+    // Scroll to zoom
+    frame.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      zoomBy(e.deltaY < 0 ? 0.1 : -0.1);
+    }, { passive: false });
+
+    // Drag to pan
+    frame.addEventListener('mousedown', (e) => {
+      if (e.target === overlay || e.target === frame) return;
+      dragging = true;
+      dragStart = { mx: e.clientX, my: e.clientY, ox: offset.x, oy: offset.y };
+      applyTransform();
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (!dragging || !dragStart) return;
+      offset.x = dragStart.ox + (e.clientX - dragStart.mx);
+      offset.y = dragStart.oy + (e.clientY - dragStart.my);
+      applyTransform();
+    });
+    window.addEventListener('mouseup', () => { dragging = false; dragStart = null; applyTransform(); });
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (!overlay.classList.contains('open')) return;
+      if (e.key === 'Escape') close();
+      if (e.key === '+' || e.key === '=') zoomBy(0.25);
+      if (e.key === '-') zoomBy(-0.25);
+      if (e.key === '0') { zoom = 1; offset = { x: 0, y: 0 }; applyTransform(); }
+    });
+  })();
+</script>
+
+</body>
+</html>
