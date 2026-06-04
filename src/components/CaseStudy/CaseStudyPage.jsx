@@ -1175,6 +1175,10 @@ function Step3() {
           <p style={T.body}>
             Phase 1 left recruiters acting as <IH>human middleware</IH> — manually copying lists out of one tool, pasting them into another, and pinging engineers when anything needed to branch. The <IH>Busy Bee</IH> drowned in repetitive setup, and the <IH>Architect</IH> couldn't see the system she was trying to operate.
           </p>
+
+          <h4 style={T.h4}>How manual workflow looks like for hiring?</h4>
+          <CaseStudyImage src={asset('/ManualProcess.png')} alt="Manual hiring workflow — recruiter as human middleware between disconnected tools" />
+
           <p style={T.body}>
             <IH>Hypothesis:</IH> a visual, node-based canvas would collapse workflow creation from days to minutes and unlock non-technical recruiters as builders — turning ops managers from operators into orchestrators.
           </p>
@@ -1413,40 +1417,6 @@ function Step3() {
       ),
     },
     {
-      kicker: 'INSPIRATION',
-      title: 'Market Inspiration — What We Borrowed',
-      accent: PALETTE[1],
-      content: (
-        <>
-          <p style={T.body}>We weren't building in a vacuum. Before designing the canvas, we audited five best-in-class marketing automation products — not to copy them, but to understand the interaction patterns that already live in recruiters' muscle memory. Each one taught us something specific.</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '20px' }}>
-            {phase2Inspiration.map((c) => (
-              <div key={c.name} style={{ background: 'rgba(255,255,255,0.88)', borderRadius: '16px', border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', overflow: 'hidden', fontFamily: "'Nunito', sans-serif" }}>
-                {/* Screenshot */}
-                <div style={{ borderBottom: `3px solid ${c.accent}`, overflow: 'hidden', maxHeight: '240px', background: '#f5f4f1' }}>
-                  <img src={c.img} alt={`${c.name} screenshot`} style={{ width: '100%', height: '240px', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
-                </div>
-                {/* Content */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0', alignItems: 'start' }}>
-                  <div style={{ padding: '18px 20px', borderRight: '1px solid rgba(0,0,0,0.07)' }}>
-                    <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#111', margin: '0 0 8px', letterSpacing: '-0.01em' }}>{c.name}</h4>
-                    <p style={{ fontSize: '12.5px', lineHeight: 1.6, color: '#666', margin: 0 }}><strong style={{ color: '#444' }}>What it does well:</strong><br/>{c.what}</p>
-                  </div>
-                  <div style={{ padding: '18px 20px' }}>
-                    <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase', color: c.accent, margin: '0 0 6px' }}>Key Takeaway for Workflows</p>
-                    <p style={{ fontSize: '12.5px', lineHeight: 1.65, color: '#444', margin: 0 }}>{c.takeaway}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <CaseStudyCallout>
-            None of these tools were built for talent acquisition — but they each solved a real UX problem at scale. Borrowing their best patterns and re-contextualising them for the recruiter persona was faster and more credible than inventing every interaction from scratch.
-          </CaseStudyCallout>
-        </>
-      ),
-    },
-    {
       kicker: 'EXPLORATION',
       title: 'Directions We Killed',
       accent: PALETTE[4],
@@ -1620,6 +1590,40 @@ function Step3() {
             </div>
 
           </div>
+        </>
+      ),
+    },
+    {
+      kicker: 'INSPIRATION',
+      title: 'Market Inspiration — What We Borrowed',
+      accent: PALETTE[1],
+      content: (
+        <>
+          <p style={T.body}>After cutting three internal directions, we widened the lens. We audited five best-in-class marketing automation products — not to copy them, but to understand the interaction patterns that already live in recruiters' muscle memory. Each one taught us something specific the canvas needed.</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '20px' }}>
+            {phase2Inspiration.map((c) => (
+              <div key={c.name} style={{ background: 'rgba(255,255,255,0.88)', borderRadius: '16px', border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', overflow: 'hidden', fontFamily: "'Nunito', sans-serif" }}>
+                {/* Screenshot */}
+                <div style={{ borderBottom: `3px solid ${c.accent}`, overflow: 'hidden', maxHeight: '240px', background: '#f5f4f1' }}>
+                  <img src={c.img} alt={`${c.name} screenshot`} style={{ width: '100%', height: '240px', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
+                </div>
+                {/* Content */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0', alignItems: 'start' }}>
+                  <div style={{ padding: '18px 20px', borderRight: '1px solid rgba(0,0,0,0.07)' }}>
+                    <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#111', margin: '0 0 8px', letterSpacing: '-0.01em' }}>{c.name}</h4>
+                    <p style={{ fontSize: '12.5px', lineHeight: 1.6, color: '#666', margin: 0 }}><strong style={{ color: '#444' }}>What it does well:</strong><br/>{c.what}</p>
+                  </div>
+                  <div style={{ padding: '18px 20px' }}>
+                    <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase', color: c.accent, margin: '0 0 6px' }}>Key Takeaway for Workflows</p>
+                    <p style={{ fontSize: '12.5px', lineHeight: 1.65, color: '#444', margin: 0 }}>{c.takeaway}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <CaseStudyCallout>
+            None of these tools were built for talent acquisition — but they each solved a real UX problem at scale. Borrowing their best patterns and re-contextualising them for the recruiter persona was faster and more credible than inventing every interaction from scratch.
+          </CaseStudyCallout>
         </>
       ),
     },
