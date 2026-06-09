@@ -21,7 +21,7 @@ function getPage() {
 
 function App() {
   const [page, setPage] = useState(getPage)
-  const [showCaseStudy, setShowCaseStudy] = useState(false)
+  const [caseStudyStep, setCaseStudyStep] = useState(null)
 
   useEffect(() => {
     const handler = () => setPage(getPage())
@@ -38,8 +38,8 @@ function App() {
     return <AIAgentsCasePage onBack={() => navigate('')} />
   }
 
-  if (showCaseStudy) {
-    return <CaseStudyPage onClose={() => setShowCaseStudy(false)} />
+  if (caseStudyStep !== null) {
+    return <CaseStudyPage onClose={() => setCaseStudyStep(null)} initialStep={caseStudyStep} />
   }
 
   return (
@@ -56,7 +56,7 @@ function App() {
         <ServicesSection />
         <AchievementsSection />
         <ExperienceSection />
-        <ProjectsSection_2 onOpenCaseStudy={() => setShowCaseStudy(true)} />
+        <ProjectsSection_2 onOpenCaseStudy={(step = 1) => setCaseStudyStep(step)} />
         <TestimonialsSection />
         <AIProcessSection />
         <CompanySection />

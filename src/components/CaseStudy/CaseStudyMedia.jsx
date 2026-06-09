@@ -190,6 +190,10 @@ export function CaseStudyImage({ src, alt, style = {} }) {
 }
 
 export function CaseStudyVideo({ src, style = {} }) {
+  const isExternal = src.startsWith('http');
+  const poster = isExternal
+    ? undefined
+    : `${import.meta.env.BASE_URL}videos/thumbnails/${src.split('/').pop().replace(/\.(mov|mp4|webm)$/i, '.jpg')}`
   return (
     <div
       className="cs-media-frame"
@@ -205,12 +209,22 @@ export function CaseStudyVideo({ src, style = {} }) {
         ...style,
       }}
     >
-      <iframe
-        src={src}
-        style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
-        allow="autoplay"
-        allowFullScreen
-      />
+      {isExternal ? (
+        <iframe
+          src={src}
+          style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+          allow="autoplay"
+          allowFullScreen
+        />
+      ) : (
+        <video
+          src={src}
+          poster={poster}
+          preload="none"
+          controls
+          style={{ width: '100%', height: '100%', display: 'block', background: '#000' }}
+        />
+      )}
     </div>
   )
 }
@@ -268,7 +282,7 @@ export function CaseStudyScrollableImage({ src, alt, pan = false }) {
           margin: '28px 0',
           border: '1.5px solid #e8e6e0',
           boxShadow: '0 4px 20px rgba(0,0,0,0.06), inset 0 1px 2px rgba(0,0,0,0.03)',
-          width: `${FRAME_W}px`,
+          width: '100%',
           height: `${FRAME_H}px`,
           overflow: 'hidden',
           position: 'relative',

@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import useInView from '../hooks/useInView'
+import { asset } from '../utils/asset'
+import PdfThumbnail from './PdfThumbnail'
 
 // ── Tab definitions ────────────────────────────────────────────────────────
 const CATEGORY_TABS = [
@@ -645,7 +647,7 @@ function AutomationsOverviewPanel({ onOpenCaseStudy }) {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '28px' }}>
         {AUTOMATION_METRICS.map(m => <MetricCard key={m.label} {...m} />)}
       </div>
-      <button className="btn-dark" onClick={onOpenCaseStudy} style={{ fontSize: '14px', padding: '12px 28px' }}>
+      <button className="btn-dark" onClick={() => onOpenCaseStudy(3)} style={{ fontSize: '14px', padding: '12px 28px' }}>
         Read Full Case Study →
       </button>
     </div>
@@ -866,21 +868,21 @@ const MOBILE_PROJECTS = [
     title: 'Attendance Mobile App',
     subtitle: 'Betterplace · 2019–2021',
     thumb: 'https://rupeshpamaihgari.github.io/Portfolio-2026/Betterplace_Thumbnails/Attendance_Mobile.png',
-    driveUrl: 'https://drive.google.com/file/d/1UN6BaK7dSt8rmJYjToqBcL2AKPWkUI8y/view?usp=sharing',
+    driveUrl: asset('/pdfs/attendance-admin-portal.pdf'),
     tag: 'Mobile App',
   },
   {
     title: 'Attendance Admin Portal',
     subtitle: 'Betterplace · 2019–2021',
     thumb: 'https://rupeshpamaihgari.github.io/Portfolio-2026/Betterplace_Thumbnails/Attendance_Admin.png',
-    driveUrl: 'https://drive.google.com/file/d/15sQIwlmsFu4vE2eL0k2qlx88zra7964r/view?usp=sharing',
+    driveUrl: asset('/pdfs/attendance-mobile-app.pdf'),
     tag: 'Web Portal',
   },
   {
     title: 'Jobs Application',
     subtitle: 'Betterplace · 2019–2021',
     thumb: 'https://rupeshpamaihgari.github.io/Portfolio-2026/Betterplace_Thumbnails/Jobs%20App.png',
-    driveUrl: 'https://drive.google.com/file/d/1yP_ZKInS5wyR9sSHFiFICL2eZ_piUHel/view?usp=sharing',
+    driveUrl: asset('/pdfs/jobs-application.pdf'),
     tag: 'Mobile App',
   },
 ]
@@ -935,11 +937,7 @@ function MobileTab() {
                 aspectRatio: '4/3',
               }}
             >
-              <img
-                src={project.thumb}
-                alt={project.title}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-              />
+              <PdfThumbnail url={project.driveUrl} />
               {/* Drive hint overlay */}
               <div
                 className="drive-hint"
@@ -961,7 +959,7 @@ function MobileTab() {
                   letterSpacing: '-0.01em',
                   display: 'flex', alignItems: 'center', gap: '6px',
                 }}>
-                  View on Drive ↗
+                  View PDF ↗
                 </span>
               </div>
             </div>
@@ -996,18 +994,19 @@ const ARVR_PROJECTS = [
     tag: 'HoloLens · Mixed Reality',
     description:
       'A HoloLens experience that lets you design interior spaces in the air — placing furniture at true scale and seeing a room evolve in seconds. It also opens a clear path to upsell: integrating with furniture makers so the pieces you try can become the pieces you buy.',
-    videoUrl: 'https://drive.google.com/file/d/1MmX8obDVQmi8dNixBg1dRsWQG8Z0F47_/preview',
-    videoType: 'drive',
+    videoUrl: asset('/videos/arvr/hololens.mp4'),
+    videoType: 'local',
     color: { mid: '#B8D4F8', dark: '#7aaee8' },
   },
   {
     id: 'bayer',
     title: "Bayer's Digital Label",
     tag: 'Mobile · Computer Vision',
+    winner: '🥇 Hackathon Winner · 2022',
     description:
       'An intelligent mobile assistant for farmers — built to scan crops, identify diseases, and read product labels on the spot. It can also speak and listen in local languages, making expert guidance feel accessible in the field.',
-    videoUrl: 'https://www.youtube.com/embed/l6kLjIw0_Gs',
-    videoType: 'youtube',
+    videoUrl: asset('/videos/arvr/bayer.mp4'),
+    videoType: 'local',
     color: { mid: '#B8F4D4', dark: '#7adcaa' },
   },
   {
@@ -1016,51 +1015,40 @@ const ARVR_PROJECTS = [
     tag: 'Smart Home · AI Assistant',
     description:
       'A simple AI assistant for smart homes — built to monitor IoT-connected devices, spot issues early, and guide users through quick troubleshooting. The goal was calm, human help when something breaks.',
-    videoUrl: 'https://www.youtube.com/embed/6I6ZcsgxCLU',
-    videoType: 'youtube',
+    videoUrl: asset('/videos/arvr/alina.mp4'),
+    videoType: 'local',
     color: { mid: '#D4B8F8', dark: '#b080f0' },
   },
   {
     id: 'accudrive',
     title: 'Accudrive — Driver Assistant',
     tag: 'XR · Driver Safety',
+    winner: '🏆 MIT Reality Virtually Winner · 2019',
     description:
       'Inspired by my "Reality Virtually" work on safer roads, Accudrive explored how XR can coach better driving in the moment. It blends monitoring, feedback, and simulation to make training feel real — without real-world risk.',
-    videoUrl: 'https://www.youtube.com/embed/K1FFypjD7PM',
-    videoType: 'youtube',
+    videoUrl: asset('/videos/arvr/accudrive.mp4'),
+    videoType: 'local',
     color: { mid: '#F4A58A', dark: '#e07858' },
   },
   {
     id: 'wheres-my-way',
     title: 'Where Is My Way — Game',
     tag: 'Game Design · Hackathon',
+    winner: '🎮 HackerEarth Game Dev Winner · 2016',
     description:
       "My game-dev roots still show up here — this project grew from the same competitive energy that helped me win HackerEarth's first Game Development Hackathon. I build playful worlds with serious intent: craft, emotion, and sharp UX choices.",
-    videoUrl: 'https://www.youtube.com/embed/-eWyRrsDbRo',
-    videoType: 'youtube',
+    videoUrl: asset('/videos/arvr/wheres-my-way.mp4'),
+    videoType: 'local',
     color: { mid: '#F8E4A0', dark: '#e8c84a' },
   },
 ]
 
 function ARVRTab() {
-  const [activeId, setActiveId]             = useState(ARVR_PROJECTS[0].id)
-  const [hasInteracted, setHasInteracted]   = useState(false)
+  const [activeId, setActiveId] = useState(ARVR_PROJECTS[0].id)
   const active = ARVR_PROJECTS.find(p => p.id === activeId)
-
-  // Build the iframe URL — always muted by default; autoplay only after user clicks a project
-  const videoSrc = (() => {
-    const sep = active.videoUrl.includes('?') ? '&' : '?'
-    if (active.videoType === 'youtube') {
-      const base = `${active.videoUrl}${sep}mute=1&rel=0`
-      return hasInteracted ? `${base}&autoplay=1` : base
-    }
-    // Google Drive preview: browsers already mute autoplay; just pass autoplay after interaction
-    return hasInteracted ? `${active.videoUrl}${sep}autoplay=1` : active.videoUrl
-  })()
 
   const handleSelect = (id) => {
     if (id === activeId) return
-    setHasInteracted(true)
     setActiveId(id)
   }
 
@@ -1094,13 +1082,13 @@ function ARVRTab() {
             transition: 'box-shadow 0.35s ease, border-color 0.35s ease',
           }}
         >
-          <iframe
+          <video
             key={active.id}
-            src={videoSrc}
-            title={active.title}
-            style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
-            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-            allowFullScreen
+            src={active.videoUrl}
+            poster={`${import.meta.env.BASE_URL}videos/thumbnails/${active.id}.jpg`}
+            preload="none"
+            controls
+            style={{ width: '100%', height: '100%', display: 'block', background: '#000' }}
           />
         </div>
 
@@ -1155,13 +1143,22 @@ function ARVRTab() {
                   </span>
                 </div>
 
-                {/* Tag row — always visible but subtle */}
-                <p style={{
-                  fontSize: '11px', color: '#999', margin: '0 0 0 32px',
-                  letterSpacing: '0.02em',
-                }}>
-                  {p.tag}
-                </p>
+                {/* Tag + winner row */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 0 32px', flexWrap: 'wrap' }}>
+                  <p style={{ fontSize: '11px', color: '#999', margin: 0, letterSpacing: '0.02em' }}>
+                    {p.tag}
+                  </p>
+                  {p.winner && (
+                    <span style={{
+                      fontSize: '10px', fontWeight: 700, color: '#1a1a1a',
+                      background: p.color.mid + '55', border: `1px solid ${p.color.dark}55`,
+                      borderRadius: '999px', padding: '2px 8px', letterSpacing: '0.01em',
+                      whiteSpace: 'nowrap',
+                    }}>
+                      {p.winner}
+                    </span>
+                  )}
+                </div>
 
                 {/* Expanding description */}
                 <div
@@ -1199,46 +1196,28 @@ const DESIGN_SYSTEM_METRICS = [
 
 function DesignSystemTab() {
   return (
-    <div style={{ display: 'flex', gap: '48px', alignItems: 'center' }} className="flex-col md:flex-row">
-      {/* Left — image placeholder */}
-      <div
-        className="hidden md:flex"
-        style={{
-          width: '420px', flexShrink: 0,
-          aspectRatio: '4 / 5',
-          borderRadius: '24px',
-          background: 'rgba(255,255,255,0.35)',
-          border: '1.5px dashed rgba(0,0,0,0.10)',
-          alignItems: 'center', justifyContent: 'center',
-        }}
+    <div style={{ animation: 'fadeInUp 0.4s cubic-bezier(0.33,1,0.68,1) forwards' }}>
+      <p style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#999', marginBottom: '12px' }}>
+        Design System · SenseHQ
+      </p>
+      <h2 style={{ fontSize: 'clamp(28px, 3vw, 44px)', fontWeight: 400, letterSpacing: '-0.03em', lineHeight: 1.1, color: '#111', marginBottom: '16px' }}>
+        Genesis
+      </h2>
+      <p style={{ fontSize: '15px', lineHeight: 1.7, color: '#555', letterSpacing: '-0.01em', marginBottom: '28px', maxWidth: '720px' }}>
+        Sense's foundational design system — the single source of truth for UI across the entire platform. From design tokens to AI-native components, Genesis ensures every product speaks the same design and interaction language, regardless of who builds it.
+      </p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '28px' }}>
+        {DESIGN_SYSTEM_METRICS.map(m => <MetricCard key={m.label} {...m} />)}
+      </div>
+      <a
+        href="https://spaced-out.github.io/ui-design-system/?path=/docs/introduction--docs"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn-dark"
+        style={{ fontSize: '14px', padding: '12px 28px', display: 'inline-block', textDecoration: 'none' }}
       >
-        <p style={{ fontSize: '13px', color: '#ccc', fontWeight: 500 }}>Image coming soon</p>
-      </div>
-
-      {/* Right — overview */}
-      <div style={{ flex: '1 1 0', minWidth: 0, animation: 'fadeInUp 0.4s cubic-bezier(0.33,1,0.68,1) forwards' }}>
-        <p style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#999', marginBottom: '12px' }}>
-          Design System · SenseHQ
-        </p>
-        <h2 style={{ fontSize: 'clamp(28px, 3vw, 44px)', fontWeight: 400, letterSpacing: '-0.03em', lineHeight: 1.1, color: '#111', marginBottom: '16px' }}>
-          Genesis
-        </h2>
-        <p style={{ fontSize: '15px', lineHeight: 1.7, color: '#555', letterSpacing: '-0.01em', marginBottom: '28px', maxWidth: '460px' }}>
-          Sense's foundational design system — the single source of truth for UI across the entire platform. From design tokens to AI-native components, Genesis ensures every product speaks the same design and interaction language, regardless of who builds it.
-        </p>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '28px' }}>
-          {DESIGN_SYSTEM_METRICS.map(m => <MetricCard key={m.label} {...m} />)}
-        </div>
-        <a
-          href="https://spaced-out.github.io/ui-design-system/?path=/docs/introduction--docs"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-dark"
-          style={{ fontSize: '14px', padding: '12px 28px', display: 'inline-block', textDecoration: 'none' }}
-        >
-          View Storybook →
-        </a>
-      </div>
+        View Storybook →
+      </a>
     </div>
   )
 }
@@ -1259,8 +1238,8 @@ function PlaceholderTab({ tabId }) {
           </span>
         ))}
       </div>
-      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 600, color: '#bbb', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-        <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ddd', display: 'inline-block' }} />
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', fontSize: '13px', fontWeight: 700, color: '#888', letterSpacing: '0.08em', textTransform: 'uppercase', background: 'rgba(0,0,0,0.06)', padding: '8px 18px', borderRadius: '999px', border: '1.5px solid rgba(0,0,0,0.1)' }}>
+        <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#aaa', display: 'inline-block' }} />
         Coming Soon
       </span>
     </div>

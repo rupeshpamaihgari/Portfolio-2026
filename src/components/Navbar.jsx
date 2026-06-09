@@ -10,7 +10,7 @@ const navLinks = [
   { label: 'Contact',        href: '#contact' },
 ]
 
-const RESUME_URL = 'https://drive.google.com/file/d/1oxhvf3JCU5ilHmtFyXZ-g8vNV6YMRmNf/view?usp=sharing'
+const RESUME_URL = `${import.meta.env.BASE_URL}pdfs/resume.pdf`
 
 export default function Navbar() {
   const [scrolled, setScrolled]   = useState(false)

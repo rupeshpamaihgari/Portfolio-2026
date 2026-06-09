@@ -444,17 +444,17 @@ function PersonaTable() {
    User flows interactive selector (Phase 2) — flow-diagram pills
 ───────────────────────────────────────────────────────────── */
 const USER_FLOWS = [
-  { label: 'Create a workflow', video: 'https://drive.google.com/file/d/1Fmd4kU8MvIaQ_G9B3JWbUTpeBuwaCjxH/preview?rm=minimal', description: 'Start by creating a new workflow from scratch. This initial step sets up the foundation for your automation process, allowing you to build a customized flow tailored to your recruitment needs.' },
-  { label: 'Add trigger', video: 'https://drive.google.com/file/d/1G1uCDZH2A1CuAMzTo1bv7JeQC9-j27dR/preview?rm=minimal', description: 'Define the trigger event that initiates your workflow. Triggers can be based on candidate actions, status changes, or specific conditions that automatically start the automation sequence.' },
-  { label: 'Add Email', video: 'https://drive.google.com/file/d/1UXXnTqIV7OTy9hYcmBqkUPn-5FS7e-Ov/preview?rm=minimal', description: 'Configure email communication nodes to send personalized messages to candidates. Customize templates, add dynamic content, and schedule delivery for effective candidate engagement.' },
-  { label: 'Add scheduling', video: 'https://drive.google.com/file/d/1MZtA5emlG8cYQLvFVH0OWfripgWwAZrh/preview?rm=minimal', description: 'Integrate smart scheduling functionality to automate interview coordination. The system finds optimal meeting times by analyzing availability and reduces back-and-forth communication.' },
-  { label: 'Add Delay', video: 'https://drive.google.com/file/d/1c8T_tBbBEpTlQrI-rbd4cr1jUVEUkTAJ/preview?rm=minimal', description: 'Insert time-based delays between workflow steps to control pacing. This allows for natural timing in your automation, such as waiting before sending follow-up communications.' },
-  { label: 'Add SMS', video: 'https://drive.google.com/file/d/1J00TPou-ElkLf5RN7l8uTFgu7FSkMHnd/preview?rm=minimal', description: 'Add SMS messaging nodes to reach candidates via text. SMS provides immediate, high-open-rate communication that complements email outreach for better engagement.' },
-  { label: 'Add path', video: 'https://drive.google.com/file/d/184G7kpkb6wsZZmT1o5zFhCQHf_aKln3E/preview?rm=minimal', description: 'Create conditional paths that branch your workflow based on specific criteria. Use split nodes to route candidates down different paths depending on their responses or qualifications.' },
-  { label: 'Candidate Matching', video: 'https://drive.google.com/file/d/1N_xpWlc5pTSyvazTjMsfmyivDm49Gg3L/preview?rm=minimal', description: 'Leverage AI-powered candidate matching to automatically identify the best-fit candidates for job requirements. The system analyzes skills, experience, and qualifications to rank matches.' },
-  { label: 'Candidate Evaluation', video: 'https://drive.google.com/file/d/1ZWhNx9XQYABi-__HaEob4FLn3aIJ7Fv4/preview?rm=minimal', description: 'Evaluate candidates through automated screening processes. This node can run assessments, score qualifications, and filter candidates based on predefined evaluation criteria.' },
-  { label: 'Database Update', video: 'https://drive.google.com/file/d/16Yj1x6PZE8kKMMkLDs1hBWDZ6lFN6yMF/preview?rm=minimal', description: 'Automatically update your database and CRM with candidate information and workflow progress. Keep all systems synchronized without manual data entry, ensuring accurate records across platforms.' },
-  { label: 'Activate', video: 'https://drive.google.com/file/d/1Z0b4kDb0WUcneuoDoISFx2lBd0DQ6TN/preview?rm=minimal', description: 'Activate your completed workflow to start the automation process. Once activated, the workflow will begin processing candidates according to the configured nodes and logic paths.' },
+  { label: 'Create a workflow', video: asset('/videos/workflow/create-workflow.mov'), description: 'Start by creating a new workflow from scratch. This initial step sets up the foundation for your automation process, allowing you to build a customized flow tailored to your recruitment needs.' },
+  { label: 'Add trigger', video: asset('/videos/workflow/add-trigger.mov'), description: 'Define the trigger event that initiates your workflow. Triggers can be based on candidate actions, status changes, or specific conditions that automatically start the automation sequence.' },
+  { label: 'Add Email', video: asset('/videos/workflow/add-email.mov'), description: 'Configure email communication nodes to send personalized messages to candidates. Customize templates, add dynamic content, and schedule delivery for effective candidate engagement.' },
+  { label: 'Add scheduling', video: asset('/videos/workflow/add-scheduling.mov'), description: 'Integrate smart scheduling functionality to automate interview coordination. The system finds optimal meeting times by analyzing availability and reduces back-and-forth communication.' },
+  { label: 'Add Delay', video: asset('/videos/workflow/add-delay.mov'), description: 'Insert time-based delays between workflow steps to control pacing. This allows for natural timing in your automation, such as waiting before sending follow-up communications.' },
+  { label: 'Add SMS', video: asset('/videos/workflow/add-sms.mov'), description: 'Add SMS messaging nodes to reach candidates via text. SMS provides immediate, high-open-rate communication that complements email outreach for better engagement.' },
+  { label: 'Add path', video: asset('/videos/workflow/add-path.mov'), description: 'Create conditional paths that branch your workflow based on specific criteria. Use split nodes to route candidates down different paths depending on their responses or qualifications.' },
+  { label: 'Candidate Matching', video: asset('/videos/workflow/candidate-match.mov'), description: 'Leverage AI-powered candidate matching to automatically identify the best-fit candidates for job requirements. The system analyzes skills, experience, and qualifications to rank matches.' },
+  { label: 'Candidate Evaluation', video: asset('/videos/workflow/candidate-evaluation.mov'), description: 'Evaluate candidates through automated screening processes. This node can run assessments, score qualifications, and filter candidates based on predefined evaluation criteria.' },
+  { label: 'Database Update', video: asset('/videos/workflow/database-update.mov'), description: 'Automatically update your database and CRM with candidate information and workflow progress. Keep all systems synchronized without manual data entry, ensuring accurate records across platforms.' },
+  { label: 'Activate', video: asset('/videos/workflow/activate.mov'), description: 'Activate your completed workflow to start the automation process. Once activated, the workflow will begin processing candidates according to the configured nodes and logic paths.' },
 ]
 
 function UserFlowsSelector() {
@@ -853,9 +853,9 @@ function Step2() {
 
       <Section>
         <h3 style={T.h3}>Reusable Lists</h3>
-        <CaseStudyVideo src="https://drive.google.com/file/d/1CfWexUA-bFAf8ASYUU_Tz81Fk_myXNcw/preview?rm=minimal" />
+        <CaseStudyVideo src={asset('/videos/ai/reusable-lists.mov')} />
         <h3 style={T.h3}>Reusable Surveys</h3>
-        <CaseStudyVideo src="https://drive.google.com/file/d/1YAaiTgEEzGx9ToJD1simXBAVPkC19DVX/preview?rm=minimal" />
+        <CaseStudyVideo src={asset('/videos/ai/survey-creation.mov')} />
       </Section>
 
       <Section>
@@ -1645,7 +1645,7 @@ function Step3() {
           </p>
           <h4 style={T.h4}>A scalable node architecture</h4>
           <p style={{ ...T.body, marginTop: '0' }}>We designed a drag-and-drop canvas categorised into four node types to handle enterprise complexity:</p>
-          <CaseStudyVideo src="https://drive.google.com/file/d/1iV-QC-l-5P68w3bO4WkKdoedK7me-J8k/preview?rm=minimal" />
+          <CaseStudyVideo src={asset('/videos/ai/sense-workflows-video.mp4')} />
         </>
       ),
     },
@@ -1830,8 +1830,8 @@ function Step4() {
         <p style={T.body}><IH>The Solution:</IH> We integrated a Generative AI assistant directly into the Workflow Canvas to assist with drafting job descriptions, generating role-specific pre-screening questions, and rewriting SMS content to be more conversational.</p>
         <p style={T.body}><IH>Impact on Auto-Submission:</IH> Ask AI directly improved the Screening Node by automating the generation of "job-specific screening questions." Instead of sending a generic message, the AI analysed the Job Description to generate precise qualification questions — accelerating the qualification process for auto-submitting candidates.</p>
         <h4 style={T.h4}>Defining Interactions First</h4>
-        <CaseStudyVideo src="https://drive.google.com/file/d/1RSDoNdp74b0T-6-8ZVET3cZ2s93k5Cs9/preview?rm=minimal" />
-        <CaseStudyVideo src="https://drive.google.com/file/d/1NsQaTAubzZUK_zsVsWR0fhioJkkIjoUt/preview?rm=minimal" />
+        <CaseStudyVideo src={asset('/videos/workflow/senseiq-interactions.mp4')} />
+        <CaseStudyVideo src={asset('/videos/ai/ask-ai.mov')} />
       </Section>
 
       <Section>
@@ -1842,7 +1842,7 @@ function Step4() {
           <LI><IH>User Input:</IH> "Find me Java Developers in SF available now who haven't been contacted in 6 months."</LI>
           <LI><IH>AI Action:</IH> The agent translates this intent into the rigid database query logic automatically — reducing list creation from minutes to seconds.</LI>
         </UL>
-        <CaseStudyVideo src="https://drive.google.com/file/d/1klwvpTs2Q73TmuaQwftpxG39Z0s5U2Um/preview?rm=minimal" />
+        <CaseStudyVideo src={asset('/videos/ai/ai-listers.mov')} />
       </Section>
 
       <Section>
@@ -1850,7 +1850,7 @@ function Step4() {
         <p style={T.body}><IH>The Problem:</IH> Analytics were static. Users couldn't diagnose <em>why</em> a workflow was failing without exporting data to Excel.</p>
         <p style={T.body}><IH>The Solution:</IH> We designed the interaction model for <IH>Jarvis</IH>, a conversational analytics agent. Instead of navigating complex dashboards, users could ask: <em>"Why is my Auto-Submission workflow failing?"</em> — and get instant diagnostic insights.</p>
         <p style={T.body}><IH>Impact on Auto-Submission:</IH> Recruiters could ask "Show me the conversion rate from Match to Submission" — instantly identifying drop-off at the outreach or screening stage, enabling rapid optimisation.</p>
-        <CaseStudyVideo src="https://drive.google.com/file/d/1snDLVyUYkW8idSWXFm9cMTUIB4sg1W1c/preview?rm=minimal" />
+        <CaseStudyVideo src={asset('/videos/ai/jarvis.mov')} />
       </Section>
 
       <Section>
@@ -1881,7 +1881,7 @@ function Step5() {
           <LI><IH>Context Store:</IH> The critical innovation — retaining memory across channels. If a candidate ignores an SMS, the agent can autonomously switch to Voice, knowing exactly where the conversation left off.</LI>
           <LI><IH>Dynamic Flow:</IH> Unlike the linear paths of Phase 2, these agents use an Agentic Orchestration Framework to autonomously decide the next best step.</LI>
         </UL>
-        <CaseStudyVideo src="https://drive.google.com/file/d/1Fj-rjo3MOC_bf_RCpqEILvaC5yejlF7g/preview?rm=minimal" />
+        <CaseStudyVideo src={asset('/videos/ai/voice-agent.mov')} />
       </Section>
 
       <Section>
@@ -1924,7 +1924,7 @@ function Step5() {
           <LI><IH>Engagement (Multimodal):</IH> Grace deploys the Multimodal Agent. If a candidate on SMS says "Call me," the agent autonomously switches to Voice, initiates the call, and conducts the pre-screen.</LI>
           <LI><IH>Decision (The Closer):</IH> The Evaluation Agent reads the transcript. IF Score &gt; 8/10 AND Interest = High → THEN trigger "Create ATS Record." The candidate is submitted to the Hiring Manager without a human recruiter ever logging in.</LI>
         </OL>
-        <CaseStudyVideo src="https://drive.google.com/file/d/18WJF2KzUEE3VJlJRuMJpZ0yYM5sPwbUb/preview?rm=minimal" />
+        <CaseStudyVideo src={asset('/videos/ai/air2.mov')} />
       </Section>
 
       <Section>
@@ -2028,8 +2028,8 @@ const STEP_COMPONENTS = [Step1, Step2, Step3, Step4, Step5, Step6]
 /* ─────────────────────────────────────────────────────────────
    Main CaseStudyPage
 ───────────────────────────────────────────────────────────── */
-export default function CaseStudyPage({ onClose }) {
-  const [step, setStep] = useState(1)
+export default function CaseStudyPage({ onClose, initialStep = 1 }) {
+  const [step, setStep] = useState(initialStep)
   const contentRef = useRef(null)
 
   const goToStep = (s) => {
