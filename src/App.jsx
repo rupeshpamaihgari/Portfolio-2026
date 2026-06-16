@@ -21,7 +21,6 @@ function getPage() {
 
 function App() {
   const [page, setPage] = useState(getPage)
-  const [caseStudyStep, setCaseStudyStep] = useState(null)
 
   useEffect(() => {
     const handler = () => setPage(getPage())
@@ -38,8 +37,10 @@ function App() {
     return <AIAgentsCasePage onBack={() => navigate('')} />
   }
 
-  if (caseStudyStep !== null) {
-    return <CaseStudyPage onClose={() => setCaseStudyStep(null)} initialStep={caseStudyStep} />
+  if (page === 'case-study' || page.startsWith('case-study/')) {
+    const stepStr = page.split('/')[1]
+    const initialStep = stepStr ? parseInt(stepStr, 10) : 1
+    return <CaseStudyPage onClose={() => navigate('')} initialStep={isNaN(initialStep) ? 1 : initialStep} />
   }
 
   return (
@@ -56,7 +57,7 @@ function App() {
         <ServicesSection />
         <AchievementsSection />
         <ExperienceSection />
-        <ProjectsSection_2 onOpenCaseStudy={(step = 1) => setCaseStudyStep(step)} />
+        <ProjectsSection_2 />
         <TestimonialsSection />
         <AIProcessSection />
         <CompanySection />

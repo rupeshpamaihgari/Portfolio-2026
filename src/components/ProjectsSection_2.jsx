@@ -540,7 +540,7 @@ function MetricCard({ value, label }) {
 }
 
 // ── Right panel — overview ─────────────────────────────────────────────────
-function OverviewPanel({ onOpenCaseStudy }) {
+function OverviewPanel() {
   return (
     <div style={{ animation: 'fadeInUp 0.4s cubic-bezier(0.33,1,0.68,1) forwards' }}>
       <p style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#999', marginBottom: '12px' }}>
@@ -555,7 +555,7 @@ function OverviewPanel({ onOpenCaseStudy }) {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '28px' }}>
         {AI_AGENTS_METRICS.map(m => <MetricCard key={m.label} {...m} />)}
       </div>
-      <button className="btn-dark" onClick={onOpenCaseStudy} style={{ fontSize: '14px', padding: '12px 28px' }}>
+      <button className="btn-dark" onClick={() => { window.location.hash = '/case-study'; window.scrollTo({ top: 0 }) }} style={{ fontSize: '14px', padding: '12px 28px' }}>
         Read Full Case Study →
       </button>
     </div>
@@ -593,7 +593,7 @@ function DetailPanel({ nodeId, onBack }) {
 }
 
 // ── AI Agents tab ──────────────────────────────────────────────────────────
-function AIAgentsTab({ onOpenCaseStudy, sectionRef }) {
+function AIAgentsTab({ sectionRef }) {
   const [selectedNode,   setSelectedNode]   = useState(null)
   const [hasInteracted,  setHasInteracted]  = useState(false)
 
@@ -615,7 +615,7 @@ function AIAgentsTab({ onOpenCaseStudy, sectionRef }) {
       <div style={{ flex: '1 1 0', minWidth: 0 }}>
         {selectedNode
           ? <DetailPanel nodeId={selectedNode} onBack={() => setSelectedNode(null)} />
-          : <OverviewPanel onOpenCaseStudy={onOpenCaseStudy} />}
+          : <OverviewPanel />}
       </div>
     </div>
   )
@@ -632,7 +632,7 @@ const AUTOMATION_METRICS = [
 ]
 
 // ── Automations overview panel (right side) ────────────────────────────────
-function AutomationsOverviewPanel({ onOpenCaseStudy }) {
+function AutomationsOverviewPanel() {
   return (
     <div style={{ animation: 'fadeInUp 0.4s cubic-bezier(0.33,1,0.68,1) forwards' }}>
       <p style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#999', marginBottom: '12px' }}>
@@ -647,7 +647,7 @@ function AutomationsOverviewPanel({ onOpenCaseStudy }) {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '28px' }}>
         {AUTOMATION_METRICS.map(m => <MetricCard key={m.label} {...m} />)}
       </div>
-      <button className="btn-dark" onClick={() => onOpenCaseStudy(3)} style={{ fontSize: '14px', padding: '12px 28px' }}>
+      <button className="btn-dark" onClick={() => { window.location.hash = '/case-study/3'; window.scrollTo({ top: 0 }) }} style={{ fontSize: '14px', padding: '12px 28px' }}>
         Read Full Case Study →
       </button>
     </div>
@@ -849,14 +849,14 @@ function WorkflowIllustration({ outerRef }) {
 }
 
 // ── Automations tab (left illustration + right panel) ──────────────────────
-function AutomationsTab({ onOpenCaseStudy, sectionRef }) {
+function AutomationsTab({ sectionRef }) {
   return (
     <div style={{ display: 'flex', gap: '48px', alignItems: 'center' }} className="flex-col md:flex-row">
       {/* Left — workflow illustration */}
       <WorkflowIllustration outerRef={sectionRef} />
       {/* Right — overview panel */}
       <div style={{ flex: '1 1 0', minWidth: 0 }}>
-        <AutomationsOverviewPanel onOpenCaseStudy={onOpenCaseStudy} />
+        <AutomationsOverviewPanel />
       </div>
     </div>
   )
@@ -1247,7 +1247,7 @@ function PlaceholderTab({ tabId }) {
 }
 
 // ── Main export ────────────────────────────────────────────────────────────
-export default function ProjectsSection_2({ onOpenCaseStudy }) {
+export default function ProjectsSection_2() {
   const [activeTab, setActiveTab] = useState(0)
   const { ref: headRef } = useInView()
   const sectionRef   = useRef(null)
@@ -1325,9 +1325,9 @@ export default function ProjectsSection_2({ onOpenCaseStudy }) {
           {/* Tab content */}
           <div key={currentTabId} style={{ animation: 'fadeInUp 0.35s cubic-bezier(0.33,1,0.68,1) forwards' }}>
             {currentTabId === 'ai-agents'
-              ? <AIAgentsTab onOpenCaseStudy={onOpenCaseStudy} sectionRef={sectionRef} />
+              ? <AIAgentsTab sectionRef={sectionRef} />
               : currentTabId === 'automations'
-              ? <AutomationsTab onOpenCaseStudy={onOpenCaseStudy} sectionRef={sectionRef} />
+              ? <AutomationsTab sectionRef={sectionRef} />
               : currentTabId === 'mobile'
               ? <MobileTab />
               : currentTabId === 'arvr'
