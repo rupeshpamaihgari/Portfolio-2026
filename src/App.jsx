@@ -13,17 +13,26 @@ import ContactSection from './components/ContactSection'
 import Footer from './components/Footer'
 import CaseStudyPage from './components/CaseStudy/CaseStudyPage'
 import AIAgentsCasePage from './components/CaseStudy/AIAgentsCasePage'
+import PresentationDeck, { countSlides } from './components/CaseStudy/Presentation/PresentationDeck'
+import evolutionDeck, { slideIndexForStep } from './components/CaseStudy/Presentation/decks/evolutionDeck'
+import aiAgentsDeck, { slideIndexForAgent } from './components/CaseStudy/Presentation/decks/aiAgentsDeck'
 
-function getPage() {
-  const hash = window.location.hash.replace(/^#\/?/, '')
-  return hash || ''
+function parseRoute() {
+  const raw = window.location.hash.replace(/^#\/?/, '')
+  const [head = '', a = '', b = ''] = raw.split('/')
+  return { head, a, b }
+}
+
+function toSlideIndex(str, len) {
+  const n = parseInt(str, 10)
+  return Number.isNaN(n) ? 0 : Math.min(Math.max(n - 1, 0), len - 1)
 }
 
 function App() {
-  const [page, setPage] = useState(getPage)
+  const [route, setRoute] = useState(parseRoute)
 
   useEffect(() => {
-    const handler = () => setPage(getPage())
+    const handler = () => setRoute(parseRoute())
     window.addEventListener('hashchange', handler)
     return () => window.removeEventListener('hashchange', handler)
   }, [])
@@ -33,14 +42,52 @@ function App() {
     window.scrollTo({ top: 0 })
   }
 
-  if (page === 'AiAgents') {
-    return <AIAgentsCasePage onBack={() => navigate('')} />
+  const { head, a, b } = route
+
+  if (head === 'AiAgents' && a === 'present') {
+    return (
+      <PresentationDeck
+        key={aiAgentsDeck.id}
+        deck={aiAgentsDeck}
+        initialSlide={toSlideIndex(b, countSlides(aiAgentsDeck))}
+        onExit={() => navigate('AiAgents')}
+      />
+    )
   }
 
-  if (page === 'case-study' || page.startsWith('case-study/')) {
-    const stepStr = page.split('/')[1]
-    const initialStep = stepStr ? parseInt(stepStr, 10) : 1
-    return <CaseStudyPage onClose={() => navigate('')} initialStep={isNaN(initialStep) ? 1 : initialStep} />
+  if (head === 'AiAgents') {
+    return (
+      <AIAgentsCasePage
+        onBack={() => navigate('')}
+        onPlay={(agentId) => navigate(`AiAgents/present/${slideIndexForAgent(agentId)}`)}
+      />
+    )
+  }
+
+  if (head === 'case-study' && a === 'present') {
+    return (
+      <PresentationDeck
+        key={evolutionDeck.id}
+        deck={evolutionDeck}
+        initialSlide={toSlideIndex(b, countSlides(evolutionDeck))}
+        onExit={(step) => navigate(`case-study/${step || 1}`)}
+      />
+    )
+  }
+
+  if (head === 'case-study') {
+    const parsed = parseInt(a, 10)
+    const step = Number.isNaN(parsed) ? 1 : parsed
+    return (
+      <CaseStudyPage
+        /* Remount on step change so the route stays authoritative —
+           initialStep only seeds state on first mount. */
+        key={`case-study-${step}`}
+        onClose={() => navigate('')}
+        initialStep={step}
+        onPlay={(s) => navigate(`case-study/present/${slideIndexForStep(s)}`)}
+      />
+    )
   }
 
   return (

@@ -379,3 +379,18 @@ h1, h2, h3, h4, h5, h6 {
 .cs-step-content {
   will-change: opacity, transform;
 }
+
+/* Present button in the case study top bars — icon-only on small screens */
+@media (max-width: 768px) {
+  .cs-play-label,
+  .cs-topbar-step {
+    display: none;
+  }
+  .cs-play-btn {
+    padding: 0 !important;
+    width: 34px;
+    height: 34px;
+    justify-content: center;
+    gap: 0 !important;
+  }
+}

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import CaseStudyAccordion from './CaseStudyAccordion'
 import CaseStudyCallout from './CaseStudyCallout'
 import { CaseStudyImage, CaseStudyVideo, CaseStudyScrollableImage, Lightbox } from './CaseStudyMedia'
+import PlayButton from './Presentation/PlayButton'
 import { asset } from '../../utils/asset'
 
 /* ─────────────────────────────────────────────────────────────
@@ -457,7 +458,7 @@ const USER_FLOWS = [
   { label: 'Activate', video: asset('/videos/workflow/activate.mov'), description: 'Activate your completed workflow to start the automation process. Once activated, the workflow will begin processing candidates according to the configured nodes and logic paths.' },
 ]
 
-function UserFlowsSelector() {
+export function UserFlowsSelector() {
   const [active, setActive] = useState(0)
 
   return (
@@ -2028,7 +2029,7 @@ const STEP_COMPONENTS = [Step1, Step2, Step3, Step4, Step5, Step6]
 /* ─────────────────────────────────────────────────────────────
    Main CaseStudyPage
 ───────────────────────────────────────────────────────────── */
-export default function CaseStudyPage({ onClose, initialStep = 1 }) {
+export default function CaseStudyPage({ onClose, initialStep = 1, onPlay }) {
   const [step, setStep] = useState(initialStep)
   const contentRef = useRef(null)
 
@@ -2105,9 +2106,15 @@ export default function CaseStudyPage({ onClose, initialStep = 1 }) {
             Case Study
           </span>
           <span style={{ width: '1px', height: '12px', background: '#ddd' }} />
-          <span style={{ fontSize: '12px', fontWeight: 600, color: '#555', fontFamily: "'Nunito', sans-serif" }}>
+          <span className="cs-topbar-step" style={{ fontSize: '12px', fontWeight: 600, color: '#555', fontFamily: "'Nunito', sans-serif" }}>
             {STEPS[step - 1].label}
           </span>
+          {onPlay && (
+            <>
+              <span style={{ width: '1px', height: '12px', background: '#ddd' }} />
+              <PlayButton onClick={() => onPlay(step)} />
+            </>
+          )}
         </div>
       </div>
 

@@ -61,6 +61,7 @@ export function Lightbox({ src, alt, onClose }) {
 
   return createPortal(
     <div
+      data-cs-lightbox="1"
       style={{
         position: 'fixed', inset: 0,
         background: 'rgba(0,0,0,0.9)',
@@ -236,7 +237,7 @@ const PAN_SCALE = 0.7
 /* ─────────────────────────────────────────────────────────────
    CaseStudyScrollableImage — pan/drag + expand-to-lightbox
 ───────────────────────────────────────────────────────────── */
-export function CaseStudyScrollableImage({ src, alt, pan = false }) {
+export function CaseStudyScrollableImage({ src, alt, pan = false, height = FRAME_H }) {
   const containerRef = useRef(null)
   const drag = useRef({ active: false, startX: 0, startY: 0, scrollLeft: 0, scrollTop: 0 })
   const [imgW, setImgW] = useState(null)
@@ -283,7 +284,7 @@ export function CaseStudyScrollableImage({ src, alt, pan = false }) {
           border: '1.5px solid #e8e6e0',
           boxShadow: '0 4px 20px rgba(0,0,0,0.06), inset 0 1px 2px rgba(0,0,0,0.03)',
           width: '100%',
-          height: `${FRAME_H}px`,
+          height: `${height}px`,
           overflow: 'hidden',
           position: 'relative',
         }}
@@ -327,7 +328,7 @@ export function CaseStudyScrollableImage({ src, alt, pan = false }) {
             <img
               src={src}
               alt={alt}
-              style={{ height: `${FRAME_H}px`, width: 'auto', maxWidth: 'none', display: 'block' }}
+              style={{ height: `${height}px`, width: 'auto', maxWidth: 'none', display: 'block' }}
             />
           </div>
         )}
