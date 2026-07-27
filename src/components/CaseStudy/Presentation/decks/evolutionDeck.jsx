@@ -21,14 +21,20 @@ function relabelStrategy(agent, from, to) {
 
 /* Four slides — research, constraints, guardrails, variations — from an
    agentsData.js-shaped object. Mirrors aiAgentsDeck.jsx's agentToPart
-   pattern; `idPrefix` keys the slide ids, `label` seeds nav labels. */
-function strategySlides(idPrefix, label, data) {
-  return [
+   pattern; `idPrefix` keys the slide ids, `label` seeds nav labels.
+   `includeVariations: false` hides the "directions we built and tested"
+   slide without touching the underlying data — flip back to true to
+   restore it later. */
+function strategySlides(idPrefix, label, data, { includeVariations = true } = {}) {
+  const slides = [
     { id: `${idPrefix}-research`, kicker: 'Research & Ideation', navLabel: `${label} — research & ideation`, title: 'What the research told us.', layout: 'card-grid', content: { cards: data.research } },
     { id: `${idPrefix}-constraints`, kicker: 'Constraints', navLabel: `${label} — constraints`, title: 'What we had to design around.', layout: 'card-grid', content: { cards: data.constraints } },
     { id: `${idPrefix}-guardrails`, kicker: 'Guardrails', navLabel: `${label} — guardrails & principles`, title: 'The rules the agent cannot break.', layout: 'list', content: { items: data.guardrails } },
-    { id: `${idPrefix}-variations`, kicker: 'Design Variations', navLabel: `${label} — variations explored`, title: 'Three directions we built and tested.', layout: 'card-grid', content: { cards: data.variations, numbered: true, minWidth: 280 } },
   ]
+  if (includeVariations) {
+    slides.push({ id: `${idPrefix}-variations`, kicker: 'Design Variations', navLabel: `${label} — variations explored`, title: 'Three directions we built and tested.', layout: 'card-grid', content: { cards: data.variations, numbered: true, minWidth: 280 } })
+  }
+  return slides
 }
 
 /* Four quadrants formed by two independent variables in every AI Lister
@@ -798,7 +804,7 @@ const phase3 = {
       },
     },
     ...(() => {
-      const [research, ...rest] = strategySlides('p3-lister', 'AI Lister', relabelStrategy(AGENTS.find((a) => a.id === 'senseiq'), 'SenseIQ', 'AI Lister'))
+      const [research, ...rest] = strategySlides('p3-lister', 'AI Lister', relabelStrategy(AGENTS.find((a) => a.id === 'senseiq'), 'SenseIQ', 'AI Lister'), { includeVariations: false })
       const quadrant = {
         id: 'p3-lister-quadrant',
         kicker: 'Research & Ideation',
@@ -829,7 +835,7 @@ const phase3 = {
         media: { kind: 'video', src: vid('ai/jarvis.mov') },
       },
     },
-    ...strategySlides('p3-jarvis', 'Jarvis', AGENTS.find((a) => a.id === 'data')),
+    ...strategySlides('p3-jarvis', 'Jarvis', AGENTS.find((a) => a.id === 'data'), { includeVariations: false }),
     {
       id: 'p3-limitations',
       kicker: 'Limitations',
@@ -899,7 +905,7 @@ const phase4 = {
         media: { kind: 'image', src: img('phase4/discover.png'), alt: 'Discover Agent interface' },
       },
     },
-    ...strategySlides('p4-discover', 'Discover Agent', AGENTS.find((a) => a.id === 'matching')),
+    ...strategySlides('p4-discover', 'Discover Agent', AGENTS.find((a) => a.id === 'matching'), { includeVariations: false }),
     {
       id: 'p4-builder',
       kicker: 'Step 2 · Screening',
@@ -934,7 +940,7 @@ const phase4 = {
         caption: 'Dynamic questions generated from the job description, with retry and voicemail handling built in.',
       },
     },
-    ...strategySlides('p4-voice', 'Voice Agent', AGENTS.find((a) => a.id === 'voice')),
+    ...strategySlides('p4-voice', 'Voice Agent', AGENTS.find((a) => a.id === 'voice'), { includeVariations: false }),
     {
       id: 'p4-evaluation',
       kicker: 'Step 3 · Decision',
@@ -951,7 +957,7 @@ const phase4 = {
         media: { kind: 'image', src: img('phase4/Evaluation Summary.png'), alt: 'Evaluation summary' },
       },
     },
-    ...strategySlides('p4-evaluation', 'Evaluation Agent', AGENTS.find((a) => a.id === 'screening')),
+    ...strategySlides('p4-evaluation', 'Evaluation Agent', AGENTS.find((a) => a.id === 'screening'), { includeVariations: false }),
     {
       id: 'p4-grace',
       kicker: 'Step 4 · Orchestration',
@@ -967,7 +973,7 @@ const phase4 = {
         media: { kind: 'image', src: img('phase4/HeroImage.png'), alt: 'Grace, the AI Recruiter' },
       },
     },
-    ...strategySlides('p4-grace', 'Grace', AGENTS.find((a) => a.id === 'ai-recruiter')),
+    ...strategySlides('p4-grace', 'Grace', AGENTS.find((a) => a.id === 'ai-recruiter'), { includeVariations: false }),
     {
       id: 'p4-autosubmission',
       kicker: 'Use Case',
