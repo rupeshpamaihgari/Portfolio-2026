@@ -823,6 +823,30 @@ function ListSlide({ slide, accent }) {
   )
 }
 
+/* ── 12. Confidence quadrant ─────────────────────────────────── */
+
+function QuadrantSlide({ slide, accent }) {
+  const { lede, quadrants = [] } = slide.content || {}
+  return (
+    <>
+      <Lede>{lede}</Lede>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
+        {quadrants.map((q, i) => (
+          <div key={i} style={{ ...CARD, padding: '20px 22px' }}>
+            <div style={{ display: 'flex', gap: '6px', marginBottom: '10px', flexWrap: 'wrap' }}>
+              <span style={{ fontFamily: FONT_B, fontSize: '10px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: accent, background: `${accent}33`, padding: '3px 9px', borderRadius: '999px' }}>{q.userConf}</span>
+              <span style={{ fontFamily: FONT_B, fontSize: '10px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#888', background: 'rgba(0,0,0,0.05)', padding: '3px 9px', borderRadius: '999px' }}>{q.aiConf}</span>
+            </div>
+            <div style={{ ...ST.cardTitle, marginBottom: '8px' }}>{q.label}</div>
+            <p style={{ fontFamily: FONT_B, fontSize: '13px', fontStyle: 'italic', color: '#555', margin: '0 0 8px', lineHeight: 1.6 }}>{q.prompt}</p>
+            <p style={{ fontFamily: FONT_B, fontSize: '13px', color: '#666', margin: 0, lineHeight: 1.6 }}><strong style={{ color: '#333' }}>AI responds:</strong> {q.response}</p>
+          </div>
+        ))}
+      </div>
+    </>
+  )
+}
+
 /* ── Registry + dispatcher ───────────────────────────────────── */
 
 const LAYOUTS = {
@@ -838,6 +862,7 @@ const LAYOUTS = {
   'quote': QuoteSlide,
   'statement': Statement,
   'list': ListSlide,
+  'quadrant': QuadrantSlide,
 }
 
 /* Layouts that own the full slide surface — the shell hides the

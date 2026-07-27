@@ -632,18 +632,82 @@ function relabelStrategy(data, from, to) {
   }
 }
 
+/* Four quadrants formed by two independent variables in every AI Lister
+   request: how clearly the recruiter knows what they want, and how
+   confident the system is that it understood. Surfaced as a research
+   finding specific to AI Lister — not a generic agentsData.js field. */
+const CONFIDENCE_QUADRANTS = [
+  {
+    label: 'The Fast Path',
+    userConf: 'User confident', aiConf: 'AI confident',
+    prompt: '"Find me Java developers in San Francisco available now who haven\'t been contacted in 6 months."',
+    response: 'Generates the filter set immediately and shows the interpreted criteria as confirmation chips — no clarification needed before returning the list.',
+  },
+  {
+    label: 'The Assist',
+    userConf: 'User unsure', aiConf: 'AI confident',
+    prompt: '"I need someone... technical, I think? Maybe backend, based near our SF office."',
+    response: 'Recognises enough signal to infer intent, and shows it back as an editable suggestion — "Did you mean: Backend Engineers within 25 miles of San Francisco?" — before running.',
+  },
+  {
+    label: 'The Check',
+    userConf: 'User confident', aiConf: 'AI unsure',
+    prompt: '"Find candidates with an active PMP-Advanced-Tier 2 certification."',
+    response: 'Flags low confidence when a term has no reliable schema mapping, shows its best approximate match, and offers a one-click switch to the manual filter builder.',
+  },
+  {
+    label: 'The Guide',
+    userConf: 'User unsure', aiConf: 'AI unsure',
+    prompt: '"Find me someone good for the role — not really sure what to look for."',
+    response: 'Falls back to the Guided Filter Builder, surfacing the job description\'s key requirements as starting filters instead of guessing blindly.',
+  },
+]
+
+function ConfidenceQuadrant({ accent = PALETTE[1] }) {
+  return (
+    <div style={{ marginBottom: '8px' }}>
+      <h4 style={T.h4}>Mapping the Confidence Matrix</h4>
+      <p style={{ ...T.body, marginBottom: '16px' }}>
+        Two things vary independently in every request: how clearly the recruiter knows what they want, and how confident the system is that it understood. Four combinations, four different responses.
+      </p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
+        {CONFIDENCE_QUADRANTS.map((q) => (
+          <div
+            key={q.label}
+            className="cs-info-card"
+            style={{
+              background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(8px)', borderRadius: '16px',
+              padding: '20px', border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+              fontFamily: "'Nunito', sans-serif",
+            }}
+          >
+            <div style={{ display: 'flex', gap: '6px', marginBottom: '10px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: accent, background: `${accent}33`, padding: '3px 9px', borderRadius: '999px' }}>{q.userConf}</span>
+              <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#888', background: 'rgba(0,0,0,0.05)', padding: '3px 9px', borderRadius: '999px' }}>{q.aiConf}</span>
+            </div>
+            <div style={{ fontSize: '14px', fontWeight: 700, color: '#111', marginBottom: '8px', letterSpacing: '-0.01em' }}>{q.label}</div>
+            <p style={{ fontSize: '13px', fontStyle: 'italic', color: '#555', margin: '0 0 8px', lineHeight: 1.6 }}>{q.prompt}</p>
+            <p style={{ fontSize: '13px', color: '#666', margin: 0, lineHeight: 1.6 }}><strong style={{ color: '#333' }}>AI responds:</strong> {q.response}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 /* ─────────────────────────────────────────────────────────────
    StrategyContent — Research / Constraints / Guardrails / Variations,
    reused verbatim from agentsData.js (the same source AIAgentsCasePage
    draws from) for products/agents with a clean 1:1 identity match.
 ───────────────────────────────────────────────────────────── */
-function StrategyContent({ data, accent = PALETTE[1] }) {
+function StrategyContent({ data, accent = PALETTE[1], quadrant = false }) {
   return (
     <>
       <h4 style={T.h4}>Research & Insight</h4>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '16px', marginBottom: '8px' }}>
         {data.research.map((r) => <InfoCard key={r.title} title={r.title} accent={accent}>{r.body}</InfoCard>)}
       </div>
+      {quadrant && <ConfidenceQuadrant accent={accent} />}
       <h4 style={T.h4}>Constraints We Navigated</h4>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '16px', marginBottom: '8px' }}>
         {data.constraints.map((c) => <InfoCard key={c.title} title={c.title} accent={accent}>{c.body}</InfoCard>)}
@@ -1756,6 +1820,14 @@ function Step4() {
         <p style={T.body}><IH>Impact on Auto-Submission:</IH> Ops managers configuring the Auto-Submission workflow could get unstuck in seconds instead of filing a support ticket — asking Ask AI directly how to wire up a path node, a delay, or a blackout window without ever leaving the canvas.</p>
         <h4 style={T.h4}>Defining Interactions First</h4>
         <CaseStudyVideo src={asset('/videos/workflow/senseiq-interactions.mp4')} />
+        <h4 style={T.h4}>A Direction We Tried: Embedded Chat</h4>
+        <p style={T.body}>
+          Before finalising the floating window, we prototyped an embedded chat variant — closer to how Google Gemini sits inside Docs — pinned directly into the page layout rather than floating above it.
+        </p>
+        <CaseStudyImage src={asset('/illustrations/case-study/phase3/EmbeddedChat.png')} alt="Embedded chat variant of Ask AI, docked into the page layout" />
+        <p style={T.body}>
+          <IH>Why we didn't ship it:</IH> not all of our product pages are fully responsive, and we also support a Chrome extension surface — an embedded panel would have needed a reserved layout slot on every page and broken inside the extension's constrained viewport. The floating window worked everywhere without either dependency.
+        </p>
         <CaseStudyVideo src={asset('/videos/ai/ask-ai.mov')} />
       </Section>
 
@@ -1768,7 +1840,7 @@ function Step4() {
           <LI><IH>AI Action:</IH> The agent translates this intent into the rigid database query logic automatically — reducing list creation from minutes to seconds.</LI>
         </UL>
         <CaseStudyAccordion items={[
-          { title: 'Research & Design Decisions — AI Lister', content: <StrategyContent data={relabelStrategy(AGENTS.find((a) => a.id === 'senseiq'), 'SenseIQ', 'AI Lister')} accent={PALETTE[1]} /> },
+          { title: 'Research & Design Decisions — AI Lister', content: <StrategyContent data={relabelStrategy(AGENTS.find((a) => a.id === 'senseiq'), 'SenseIQ', 'AI Lister')} accent={PALETTE[1]} quadrant /> },
         ]} />
         <CaseStudyVideo src={asset('/videos/ai/ai-listers.mov')} />
       </Section>
@@ -1870,6 +1942,20 @@ function Step5() {
           <LI><IH>Decision (The Closer):</IH> The Evaluation Agent reads the transcript. IF Score &gt; 8/10 AND Interest = High → THEN trigger "Create ATS Record." The candidate is submitted to the Hiring Manager without a human recruiter ever logging in.</LI>
         </OL>
         <CaseStudyVideo src={asset('/videos/ai/air2.mov')} />
+      </Section>
+
+      <Section>
+        <h3 style={T.h3}>Step 6: Human in the Loop</h3>
+        <p style={T.body}>
+          Autonomy doesn't mean invisibility. Every candidate the agents aren't fully confident about routes to a <IH>Needs Review</IH> queue — with the full evidence trail attached, and the recruiter always holding the final call.
+        </p>
+        <CaseStudyImage src={asset('/illustrations/case-study/phase4/HumanInLoop_Pipeline.png')} alt="Candidate pipeline showing candidates that need recruiter review, and the review side panel with supporting information and recruiter actions" />
+        <p style={{ ...T.body, fontSize: '13px', color: '#999', marginTop: '-8px' }}>
+          Left: the Candidate Pipeline shows exactly where every applicant sits — Applied, Auto-Screened, Needs Review, Shortlisted, Rejected — with a dedicated queue for anyone the agents flagged, each row showing the AI Match Score, the reason for review, and time waiting. Right: opening a candidate surfaces the full case — why the AI flagged them, the supporting evidence (resume, voice transcript, AI evaluation, job details), and one-click actions — Move to Shortlisted, Send for More Info, or Reject.
+        </p>
+        <CaseStudyCallout>
+          <strong>The Glass Box principle, made concrete:</strong> a recruiter never has to trust a black-box score. They see exactly why a candidate was flagged, and can override it in one click.
+        </CaseStudyCallout>
       </Section>
 
       <Section>

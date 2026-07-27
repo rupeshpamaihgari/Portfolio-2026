@@ -31,6 +31,37 @@ function strategySlides(idPrefix, label, data) {
   ]
 }
 
+/* Four quadrants formed by two independent variables in every AI Lister
+   request: how clearly the recruiter knows what they want, and how
+   confident the system is that it understood. Mirrors the same content
+   in CaseStudyPage.jsx's ConfidenceQuadrant. */
+const CONFIDENCE_QUADRANTS = [
+  {
+    label: 'The Fast Path',
+    userConf: 'User confident', aiConf: 'AI confident',
+    prompt: '"Find me Java developers in San Francisco available now who haven\'t been contacted in 6 months."',
+    response: 'Generates the filter set immediately and shows the interpreted criteria as confirmation chips — no clarification needed before returning the list.',
+  },
+  {
+    label: 'The Assist',
+    userConf: 'User unsure', aiConf: 'AI confident',
+    prompt: '"I need someone... technical, I think? Maybe backend, based near our SF office."',
+    response: 'Recognises enough signal to infer intent, and shows it back as an editable suggestion — "Did you mean: Backend Engineers within 25 miles of San Francisco?" — before running.',
+  },
+  {
+    label: 'The Check',
+    userConf: 'User confident', aiConf: 'AI unsure',
+    prompt: '"Find candidates with an active PMP-Advanced-Tier 2 certification."',
+    response: 'Flags low confidence when a term has no reliable schema mapping, shows its best approximate match, and offers a one-click switch to the manual filter builder.',
+  },
+  {
+    label: 'The Guide',
+    userConf: 'User unsure', aiConf: 'AI unsure',
+    prompt: '"Find me someone good for the role — not really sure what to look for."',
+    response: 'Falls back to the Guided Filter Builder, surfacing the job description\'s key requirements as starting filters instead of guessing blindly.',
+  },
+]
+
 /* ─────────────────────────────────────────────────────────────
    Evolution of AI Automation Agent — presentation deck.
 
@@ -713,7 +744,7 @@ const phase3 = {
       id: 'p3-senseiq',
       kicker: 'Interaction Design',
       navLabel: 'Defining the AI interactions',
-      title: 'Designing how AI shows up inside a node.',
+      title: 'First step is to finalise interaction of NLP input.',
       layout: 'media',
       source: 'Step4 · Defining Interactions First',
       content: {
@@ -738,6 +769,19 @@ const phase3 = {
       },
     },
     {
+      id: 'p3-askai-embedded-chat',
+      kicker: 'Ask AI',
+      navLabel: 'A direction we tried: embedded chat',
+      title: 'A direction we tried: embedded chat.',
+      layout: 'media',
+      source: 'Step4 · Ask AI — Embedded Chat exploration',
+      content: {
+        lede: 'Before finalising the floating window, we prototyped an embedded chat variant — closer to how Google Gemini sits inside Docs — pinned directly into the page layout rather than floating above it.',
+        media: { kind: 'image', src: img('phase3/EmbeddedChat.png'), alt: 'Embedded chat variant of Ask AI, docked into the page layout' },
+        caption: 'Why we didn\'t ship it: not all of our product pages are fully responsive, and we also support a Chrome extension surface — an embedded panel would have needed a reserved layout slot everywhere and broken inside the extension\'s constrained viewport. The floating window worked everywhere without either dependency.',
+      },
+    },
+    {
       id: 'p3-lister',
       kicker: 'AI Lister',
       navLabel: 'AI Lister — solving the Boolean burden',
@@ -753,7 +797,22 @@ const phase3 = {
         media: { kind: 'video', src: vid('ai/ai-listers.mov') },
       },
     },
-    ...strategySlides('p3-lister', 'AI Lister', relabelStrategy(AGENTS.find((a) => a.id === 'senseiq'), 'SenseIQ', 'AI Lister')),
+    ...(() => {
+      const [research, ...rest] = strategySlides('p3-lister', 'AI Lister', relabelStrategy(AGENTS.find((a) => a.id === 'senseiq'), 'SenseIQ', 'AI Lister'))
+      const quadrant = {
+        id: 'p3-lister-quadrant',
+        kicker: 'Research & Ideation',
+        navLabel: 'AI Lister — the confidence matrix',
+        title: 'Mapping the confidence matrix.',
+        layout: 'quadrant',
+        source: 'Step4 · AI Lister Research (confidence quadrants)',
+        content: {
+          lede: 'Two things vary independently in every request: how clearly the recruiter knows what they want, and how confident the system is that it understood. Four combinations, four different responses.',
+          quadrants: CONFIDENCE_QUADRANTS,
+        },
+      }
+      return [research, quadrant, ...rest]
+    })(),
     {
       id: 'p3-jarvis',
       kicker: 'Jarvis',
@@ -915,7 +974,7 @@ const phase4 = {
       navLabel: 'Auto-Submission, fully autonomous',
       title: 'Auto-Submission, finally without a human.',
       layout: 'process-flow',
-      source: 'Step5 · Step 3: Auto-Submission in the Agentic World',
+      source: 'Step5 · Step 5: Auto-Submission in the Agentic World',
       content: {
         lede: 'The same use case from Phase 1, where it cost a recruiter an afternoon across four tools.',
         steps: [
@@ -925,6 +984,19 @@ const phase4 = {
           { title: 'Decision — the Closer', body: 'Evaluation scores, then writes the submission to the ATS.' },
         ],
         media: { kind: 'video', src: vid('ai/air2.mov') },
+      },
+    },
+    {
+      id: 'p4-human-loop',
+      kicker: 'Human in the Loop',
+      navLabel: 'Human in the loop — the safety valve',
+      title: 'Autonomy does not mean invisibility.',
+      layout: 'media',
+      source: 'Step5 · Step 6: Human in the Loop',
+      content: {
+        lede: 'Every candidate the agents aren\'t fully confident about routes to a Needs Review queue — with the full evidence trail attached, and the recruiter always holding the final call.',
+        media: { kind: 'image', src: asset('/illustrations/case-study/phase4/HumanInLoop_Pipeline.png'), alt: 'Candidate pipeline showing candidates that need recruiter review, and the review side panel with supporting information and recruiter actions' },
+        caption: 'Left: the Candidate Pipeline — Applied, Auto-Screened, Needs Review, Shortlisted, Rejected. Right: opening a candidate surfaces the full case and one-click actions. A recruiter never has to trust a black-box score — they see exactly why, and can override it in one click.',
       },
     },
     {
