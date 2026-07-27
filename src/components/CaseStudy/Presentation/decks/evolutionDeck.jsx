@@ -753,6 +753,19 @@ const phase3 = {
       },
     },
     {
+      id: 'p3-askai-embedded-chat',
+      kicker: 'Ask AI',
+      navLabel: 'A direction we tried: embedded chat',
+      title: 'A direction we tried: embedded chat.',
+      layout: 'media',
+      source: 'Step4 · Ask AI — Embedded Chat exploration',
+      content: {
+        lede: 'Before finalising the floating window, we prototyped an embedded chat variant — closer to how Google Gemini sits inside Docs — pinned directly into the page layout rather than floating above it.',
+        media: { kind: 'image', src: img('phase3/EmbeddedChat.png'), alt: 'Embedded chat variant of Ask AI, docked into the page layout' },
+        caption: 'Why we didn\'t ship it: not all of our product pages are fully responsive, and we also support a Chrome extension surface — an embedded panel would have needed a reserved layout slot everywhere and broken inside the extension\'s constrained viewport. The floating window worked everywhere without either dependency.',
+      },
+    },
+    {
       id: 'p3-askai',
       kicker: 'Ask AI',
       navLabel: 'Ask AI — helping recruiters build workflows',
@@ -766,19 +779,6 @@ const phase3 = {
           { title: 'Guided, not generated', body: 'We designed the interaction model around answering questions, not generating content: a contextual entry point, procedural step-by-step responses, and a clear fallback when a question falls outside the canvas.' },
         ],
         media: { kind: 'video', src: vid('ai/ask-ai.mov') },
-      },
-    },
-    {
-      id: 'p3-askai-embedded-chat',
-      kicker: 'Ask AI',
-      navLabel: 'A direction we tried: embedded chat',
-      title: 'A direction we tried: embedded chat.',
-      layout: 'media',
-      source: 'Step4 · Ask AI — Embedded Chat exploration',
-      content: {
-        lede: 'Before finalising the floating window, we prototyped an embedded chat variant — closer to how Google Gemini sits inside Docs — pinned directly into the page layout rather than floating above it.',
-        media: { kind: 'image', src: img('phase3/EmbeddedChat.png'), alt: 'Embedded chat variant of Ask AI, docked into the page layout' },
-        caption: 'Why we didn\'t ship it: not all of our product pages are fully responsive, and we also support a Chrome extension surface — an embedded panel would have needed a reserved layout slot everywhere and broken inside the extension\'s constrained viewport. The floating window worked everywhere without either dependency.',
       },
     },
     {
