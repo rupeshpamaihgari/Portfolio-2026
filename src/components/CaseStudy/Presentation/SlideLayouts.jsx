@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { CaseStudyVideo, Lightbox } from '../CaseStudyMedia'
+import { useState, useEffect, useRef } from 'react'
+import { CaseStudyVideo, CaseStudyScrollableImage, Lightbox } from '../CaseStudyMedia'
 
 /* ─────────────────────────────────────────────────────────────
    Slide layout primitives.
@@ -62,65 +62,123 @@ function Lede({ children }) {
 
 /* Fitted slide image.
 
-   Deliberately not CaseStudyImage / CaseStudyScrollableImage: those use a
-   fixed-height frame with `width: auto`, which leaves dead space beside any
-   image whose aspect ratio is narrower than the frame. Here the image fills
-   the available width and is capped by height, so the frame always hugs it.
-   Full detail stays one click away in the Lightbox. */
-function SlideImage({ src, alt = '', maxHeight = 'min(52vh, 470px)', aspect }) {
+   The image fills its column and grows in proportion, so the frame always
+   carries the image's own aspect ratio and never shows padding beside it.
+   Panoramas too wide to read at that size fall back to the case study's
+   horizontal-scroll frame. Full detail is one click away in the Lightbox. */
+function SlideImage({ src, alt = '', scrollFrame, scrollHeight = 430, pan = false, aspect }) {
   const [open, setOpen] = useState(false)
+  const [ratio, setRatio] = useState(null)
+  const [boxW, setBoxW] = useState(0)
+  const boxRef = useRef(null)
+
+  useEffect(() => {
+    let cancelled = false
+    const probe = new Image()
+    probe.onload = () => {
+      if (!cancelled && probe.naturalHeight) setRatio(probe.naturalWidth / probe.naturalHeight)
+    }
+    probe.src = src
+    return () => { cancelled = true }
+  }, [src])
+
+  useEffect(() => {
+    const el = boxRef.current
+    if (!el) return
+    const measure = () => setBoxW(el.clientWidth)
+    measure()
+    if (typeof ResizeObserver === 'undefined') return
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  /* Scroll frame only when the image genuinely cannot fit: at the frame's
+     height it would still be wider than the column. A ratio test alone is not
+     enough — a wide-ish image in a wide column fits fine, and forcing it to
+     scroll would leave dead space to its right. */
+  const panorama = scrollFrame !== undefined
+    ? scrollFrame
+    /* Pannable diagrams are always framed — panning is the whole point. */
+    : pan || (ratio !== null && boxW > 0 && ratio * scrollHeight > boxW + 8)
+
+  if (panorama) {
+    return (
+      <div ref={boxRef} className="pd-wide" style={{ minWidth: 0 }}>
+        <CaseStudyScrollableImage src={src} alt={alt} pan={pan} height={scrollHeight} style={{ margin: 0 }} />
+      </div>
+    )
+  }
+
   return (
-    <>
-      <div
-        className="cs-media-frame pd-img-frame"
-        onClick={() => setOpen(true)}
-        role="button"
-        tabIndex={0}
-        aria-label={alt ? `Expand image: ${alt}` : 'Expand image'}
-        onKeyDown={(e) => { if (e.key === 'Enter') setOpen(true) }}
-        style={{
-          borderRadius: '18px', border: '1.5px solid #e8e6e0', background: '#fff',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.06), inset 0 1px 2px rgba(0,0,0,0.03)',
-          overflow: 'hidden', position: 'relative', cursor: 'zoom-in',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          ...(aspect ? { aspectRatio: aspect } : null),
-        }}
-      >
-        <img
-          src={src}
-          alt={alt}
-          draggable={false}
-          style={
-            aspect
-              ? { width: '100%', height: '100%', objectFit: 'contain', display: 'block' }
-              : { width: '100%', height: 'auto', maxHeight, objectFit: 'contain', display: 'block' }
-          }
-        />
-        <span
-          aria-hidden="true"
-          className="pd-expand"
+    <div ref={boxRef} style={{ minWidth: 0 }}>
+      <div style={{ minWidth: 0 }}>
+        <div
+          className="cs-media-frame pd-img-frame"
+          onClick={() => setOpen(true)}
+          role="button"
+          tabIndex={0}
+          aria-label={alt ? `Expand image: ${alt}` : 'Expand image'}
+          onKeyDown={(e) => { if (e.key === 'Enter') setOpen(true) }}
           style={{
-            position: 'absolute', top: '10px', right: '10px',
-            background: 'rgba(0,0,0,0.45)', border: '1px solid rgba(255,255,255,0.2)',
-            borderRadius: '8px', padding: '6px', lineHeight: 0,
-            backdropFilter: 'blur(6px)', opacity: 0, transition: 'opacity 0.25s ease',
+            borderRadius: '18px', border: '1.5px solid #e8e6e0', background: '#fff',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06), inset 0 1px 2px rgba(0,0,0,0.03)',
+            overflow: 'hidden', position: 'relative', cursor: 'zoom-in',
+            maxWidth: '100%', lineHeight: 0,
+            ...(aspect ? { aspectRatio: aspect, display: 'flex', alignItems: 'center', justifyContent: 'center' } : null),
           }}
         >
-          <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
-            <path d="M1 5V1H5M9 1H13V5M13 9V13H9M5 13H1V9" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </span>
+          <img
+            src={src}
+            alt={alt}
+            draggable={false}
+            style={
+              aspect
+                /* A fixed aspect ratio + contain keeps a row of differently-
+                   shaped illustrations on one grid — the frame is white, so
+                   the letterbox padding this trades away is invisible here. */
+                ? { display: 'block', width: '100%', height: '100%', objectFit: 'contain' }
+                /* Otherwise fill the column and grow in proportion — no height
+                   cap, since capping height while width is 100% is exactly
+                   what letterboxes a solo hero image. */
+                : { display: 'block', width: '100%', height: 'auto' }
+            }
+          />
+          <span
+            aria-hidden="true"
+            className="pd-expand"
+            style={{
+              position: 'absolute', top: '10px', right: '10px',
+              background: 'rgba(0,0,0,0.45)', border: '1px solid rgba(255,255,255,0.2)',
+              borderRadius: '8px', padding: '6px', lineHeight: 0,
+              backdropFilter: 'blur(6px)', opacity: 0, transition: 'opacity 0.25s ease',
+            }}
+          >
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+              <path d="M1 5V1H5M9 1H13V5M13 9V13H9M5 13H1V9" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+        </div>
       </div>
       {open && <Lightbox src={src} alt={alt} onClose={() => setOpen(false)} />}
-    </>
+    </div>
   )
 }
 
-function Media({ media, maxHeight }) {
+function Media({ media }) {
   if (!media) return null
-  const { kind = 'image', src, alt = '' } = media
+  const { kind = 'image', src, alt = '', scrollFrame, pan = false } = media
   if (kind === 'video') return <CaseStudyVideo src={src} style={{ margin: 0 }} />
-  return <SlideImage src={src} alt={alt} maxHeight={maxHeight || media.maxHeight} />
+  return (
+    <SlideImage
+      src={src}
+      alt={alt}
+      pan={pan}
+      /* `kind: 'scroll'` is only a hint — SlideImage decides from the real
+         image ratio and column width. Set `scrollFrame` to force it. */
+      scrollFrame={scrollFrame}
+    />
+  )
 }
 
 /* Row of supporting images — used where the scroll-mode case study shows a
@@ -135,11 +193,11 @@ function Gallery({ items = [], columns, aspect = '4 / 3' }) {
     >
       {items.map((it, i) => (
         <figure key={i} style={{ margin: 0, minWidth: 0 }}>
-          {/* A shared aspect ratio keeps the row uniform and the captions on one
-              baseline. The frame is white, so contain-padding is invisible. */}
-          <SlideImage src={it.src} alt={it.alt || ''} aspect={it.aspect || aspect} />
+          {/* A shared aspect ratio — not each image's own — is what keeps a
+              row of differently-shaped illustrations reading as one grid. */}
+          <SlideImage src={it.src} alt={it.alt || ''} scrollHeight={220} aspect={it.aspect || aspect} />
           {it.caption && (
-            <figcaption style={{ ...ST.caption, fontSize: '12px', margin: '9px 2px 0' }}>{it.caption}</figcaption>
+            <figcaption style={{ ...ST.caption, fontSize: '12px', margin: '9px 2px 0', textAlign: 'center' }}>{it.caption}</figcaption>
           )}
         </figure>
       ))}
@@ -311,36 +369,191 @@ function BulletsImpact({ slide, accent }) {
 
 /* ── 4. Card grid ────────────────────────────────────────────── */
 
+/* One card's visual (screenshot or inline mock), reused by both the grid
+   and the stacked-row variant below. Banner screenshots open the shared
+   Lightbox on click, same as every other slide image; inline SVG mocks have
+   no higher-resolution source to zoom into, so they stay static. */
+function CardVisual({ c }) {
+  const [open, setOpen] = useState(false)
+
+  if (c.Mock) {
+    return (
+      <div style={{ background: c.mockBg || '#f0ede8', lineHeight: 0, height: '100%' }}>
+        <c.Mock />
+      </div>
+    )
+  }
+  if (c.banner) {
+    /* Screenshots (the default) fill the frame with `cover` — they're dense
+       enough that a crop reads fine. Icon-style illustrations on a
+       transparent/white background use `contain` instead, since cropping
+       them tends to cut the artwork off mid-shape. */
+    const fit = c.bannerFit || 'cover'
+    return (
+      <>
+        <div
+          onClick={() => setOpen(true)}
+          role="button"
+          tabIndex={0}
+          aria-label={c.title ? `Expand image: ${c.title}` : 'Expand image'}
+          onKeyDown={(e) => { if (e.key === 'Enter') setOpen(true) }}
+          style={{ position: 'relative', height: '100%', cursor: 'zoom-in', background: fit === 'contain' ? '#fff' : undefined }}
+        >
+          <img
+            src={c.banner}
+            alt=""
+            style={{ display: 'block', width: '100%', height: '100%', objectFit: fit, objectPosition: 'center top', padding: fit === 'contain' ? '20px' : 0, boxSizing: 'border-box' }}
+          />
+          <span
+            aria-hidden="true"
+            className="pd-expand"
+            style={{
+              position: 'absolute', top: '10px', right: '10px',
+              background: 'rgba(0,0,0,0.45)', border: '1px solid rgba(255,255,255,0.2)',
+              borderRadius: '8px', padding: '6px', lineHeight: 0,
+              backdropFilter: 'blur(6px)', opacity: 0, transition: 'opacity 0.25s ease',
+            }}
+          >
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+              <path d="M1 5V1H5M9 1H13V5M13 9V13H9M5 13H1V9" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+        </div>
+        {open && <Lightbox src={c.banner} alt={c.title || ''} onClose={() => setOpen(false)} />}
+      </>
+    )
+  }
+  return null
+}
+
+/* A slim, non-sticky highlight strip — for when a slide needs a punchline
+   but the images are the point, so the dark card from bullets-impact would
+   compete with them for space instead of the cards taking a whole column. */
+function ImpactStrip({ impact, accent }) {
+  if (!impact) return null
+  return (
+    <div style={{ background: DARK_MESH, borderRadius: '16px', padding: '20px 26px', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', gap: '18px', flexWrap: 'wrap' }}>
+      <div style={{ position: 'absolute', top: '-50px', right: '10%', width: '160px', height: '160px', borderRadius: '50%', background: `radial-gradient(circle, ${accent}26 0%, transparent 70%)`, filter: 'blur(30px)' }} />
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+        <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: accent }} />
+        <span style={{ ...ST.kicker, color: 'rgba(255,255,255,0.4)', whiteSpace: 'nowrap' }}>{impact.label || 'The Impact'}</span>
+      </div>
+      <p style={{ position: 'relative', zIndex: 1, fontFamily: FONT_H, fontSize: 'clamp(16px, 1.8vw, 20px)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.3, color: '#fff', margin: 0, flex: '1 1 260px' }}>
+        {impact.statement}
+      </p>
+      {impact.footnote && (
+        <p style={{ position: 'relative', zIndex: 1, fontFamily: FONT_B, fontStyle: 'italic', fontSize: '12.5px', lineHeight: 1.6, color: 'rgba(255,255,255,0.55)', margin: 0, flex: '1 1 260px' }}>
+          {impact.footnote}
+        </p>
+      )}
+    </div>
+  )
+}
+
 function CardGrid({ slide, accent }) {
-  const { lede, cards = [], numbered = false, minWidth = 260, media, caption, gallery, imageSize = 60 } = slide.content || {}
+  const { lede, cards = [], numbered = false, minWidth = 260, media, caption, gallery, galleryPosition = 'bottom', impact, imageSize = 60, stacked = false } = slide.content || {}
+  const galleryEl = gallery?.length ? <Gallery items={gallery} /> : null
+
+  const cardHeader = (c, i, tint) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+      {c.badge && (
+        <span style={{ fontFamily: FONT_B, fontSize: '10px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#c44', background: 'rgba(196,68,68,0.08)', padding: '3px 9px', borderRadius: '999px', border: '1px solid rgba(196,68,68,0.2)' }}>
+          {c.badge}
+        </span>
+      )}
+      {numbered && (
+        <span style={{ fontFamily: FONT_B, fontSize: '12px', fontWeight: 700, color: tint, letterSpacing: '0.06em', fontVariantNumeric: 'tabular-nums' }}>
+          {String(i + 1).padStart(2, '0')}
+        </span>
+      )}
+      {c.title && <span style={ST.cardTitle}>{c.title}</span>}
+    </div>
+  )
+
+  /* Stacked rows: full-width cards, content on the left and the visual on
+     the right, one below the other. Trades density for readability — the
+     visual and its copy are both at full size instead of squeezed into a
+     grid cell. The slide scrolls if the stack runs long. */
+  if (stacked) {
+    return (
+      <>
+        <Lede>{lede}</Lede>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {cards.map((c, i) => {
+            const tint = c.accent || PALETTE[i % PALETTE.length]
+            const hasVisual = c.Mock || c.banner
+            return (
+              <div
+                key={i}
+                className="pd-num-card pd-card-row"
+                style={{
+                  ...CARD, overflow: 'hidden', position: 'relative',
+                  display: 'grid', gridTemplateColumns: hasVisual ? '1fr 1fr' : '1fr',
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                }}
+              >
+                <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: '3px', background: tint, zIndex: 1 }} />
+                <div style={{ padding: '24px 26px', minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  {cardHeader(c, i, tint)}
+                  <p style={{ fontFamily: FONT_B, fontSize: '14px', lineHeight: 1.75, color: '#555', margin: 0 }}>{c.body}</p>
+                </div>
+                {hasVisual && (
+                  <div className="pd-card-visual" style={{ borderLeft: '1px solid rgba(0,0,0,0.06)', minHeight: '180px' }}>
+                    <CardVisual c={c} />
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+        {media && (
+          <div style={{ marginTop: '26px' }}>
+            <Media media={media} />
+            {caption && <p style={{ ...ST.caption, margin: '10px 2px 0' }}>{caption}</p>}
+          </div>
+        )}
+        <Gallery items={gallery} />
+        {impact && <div style={{ marginTop: '22px' }}><ImpactStrip impact={impact} accent={accent} /></div>}
+      </>
+    )
+  }
+
   return (
     <>
       <Lede>{lede}</Lede>
+      {galleryPosition === 'top' && <div style={{ marginBottom: '24px' }}>{galleryEl}</div>}
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fill, minmax(${minWidth}px, 1fr))`, gap: '16px' }}>
         {cards.map((c, i) => {
           const tint = c.accent || PALETTE[i % PALETTE.length]
           const round = c.imageShape === 'circle'
+          /* A banner (screenshot or inline mock) runs full-bleed across the top
+             of the card, so the card body gets its own inset padding. */
+          const banner = c.banner || c.Mock
           return (
-            <div key={i} className="pd-num-card" style={{ ...CARD, padding: '20px 22px', overflow: 'hidden', position: 'relative', transition: 'transform 0.3s ease, box-shadow 0.3s ease' }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: tint }} />
-              {c.image && (
-                <img
-                  src={c.image}
-                  alt=""
-                  style={{
-                    width: `${imageSize}px`, height: `${imageSize}px`, objectFit: 'contain',
-                    display: 'block', marginBottom: '12px',
-                    ...(round ? { borderRadius: '50%', objectFit: 'cover', border: `2px solid ${tint}` } : null),
-                  }}
-                />
-              )}
-              {numbered && (
-                <div style={{ fontFamily: FONT_B, fontSize: '12px', fontWeight: 700, color: tint, letterSpacing: '0.06em', marginBottom: '8px', fontVariantNumeric: 'tabular-nums' }}>
-                  {String(i + 1).padStart(2, '0')}
-                </div>
-              )}
-              {c.title && <div style={{ ...ST.cardTitle, marginBottom: '8px' }}>{c.title}</div>}
-              <p style={{ fontFamily: FONT_B, fontSize: '13.5px', lineHeight: 1.7, color: '#555', margin: 0 }}>{c.body}</p>
+            <div
+              key={i}
+              className="pd-num-card"
+              style={{ ...CARD, padding: banner ? 0 : '20px 22px', overflow: 'hidden', position: 'relative', transition: 'transform 0.3s ease, box-shadow 0.3s ease' }}
+            >
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: tint, zIndex: 1 }} />
+
+              {banner && <div style={{ height: '170px', borderBottom: '1px solid rgba(0,0,0,0.08)' }}><CardVisual c={c} /></div>}
+
+              <div style={banner ? { padding: '16px 20px 18px' } : undefined}>
+                {c.image && (
+                  <img
+                    src={c.image}
+                    alt=""
+                    style={{
+                      width: `${imageSize}px`, height: `${imageSize}px`, objectFit: 'contain',
+                      display: 'block', marginBottom: '12px',
+                      ...(round ? { borderRadius: '50%', objectFit: 'cover', border: `2px solid ${tint}` } : null),
+                    }}
+                  />
+                )}
+                {cardHeader(c, i, tint)}
+                <p style={{ fontFamily: FONT_B, fontSize: '13.5px', lineHeight: 1.7, color: '#555', margin: 0 }}>{c.body}</p>
+              </div>
             </div>
           )
         })}
@@ -351,7 +564,8 @@ function CardGrid({ slide, accent }) {
           {caption && <p style={{ ...ST.caption, margin: '10px 2px 0' }}>{caption}</p>}
         </div>
       )}
-      <Gallery items={gallery} />
+      {galleryPosition !== 'top' && galleryEl}
+      {impact && <div style={{ marginTop: '22px' }}><ImpactStrip impact={impact} accent={accent} /></div>}
     </>
   )
 }
@@ -400,7 +614,7 @@ function MediaSlide({ slide }) {
   return (
     <>
       <Lede>{lede}</Lede>
-      <Media media={media} maxHeight="min(58vh, 540px)" />
+      <Media media={media} />
       {caption && <p style={{ ...ST.caption, margin: '10px 2px 0' }}>{caption}</p>}
       <Gallery items={gallery} />
     </>
@@ -446,7 +660,7 @@ function SplitMedia({ slide, accent }) {
 
   const mediaCol = (
     <div style={{ minWidth: 0 }}>
-      <Media media={media} maxHeight={side ? 'min(46vh, 400px)' : undefined} />
+      <Media media={media} />
       {caption && <p style={{ ...ST.caption, margin: '10px 2px 0' }}>{caption}</p>}
     </div>
   )

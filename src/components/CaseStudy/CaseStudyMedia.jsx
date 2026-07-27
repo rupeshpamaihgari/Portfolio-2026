@@ -237,7 +237,7 @@ const PAN_SCALE = 0.7
 /* ─────────────────────────────────────────────────────────────
    CaseStudyScrollableImage — pan/drag + expand-to-lightbox
 ───────────────────────────────────────────────────────────── */
-export function CaseStudyScrollableImage({ src, alt, pan = false, height = FRAME_H }) {
+export function CaseStudyScrollableImage({ src, alt, pan = false, height = FRAME_H, style = {} }) {
   const containerRef = useRef(null)
   const drag = useRef({ active: false, startX: 0, startY: 0, scrollLeft: 0, scrollTop: 0 })
   const [imgW, setImgW] = useState(null)
@@ -287,6 +287,7 @@ export function CaseStudyScrollableImage({ src, alt, pan = false, height = FRAME
           height: `${height}px`,
           overflow: 'hidden',
           position: 'relative',
+          ...style,
         }}
       >
         {/* Expand button */}

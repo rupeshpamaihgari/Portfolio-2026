@@ -1,6 +1,35 @@
 import { asset } from '../../../../utils/asset'
 import { UserFlowsSelector } from '../../CaseStudyPage'
+import { AccordionCanvasMock, CodeFirstDslMock, WizardStepMock } from '../../explorationMocks'
+import { AGENTS } from '../../agentsData'
 import { PALETTE } from '../SlideLayouts'
+
+/* Some agentsData.js entries name-check their own AIAgentsCasePage label
+   inside a research/constraint body. When reused here under a different
+   product name, swap the label so the copy stays consistent with this
+   deck's own naming — agentsData.js itself is left untouched. */
+function relabelStrategy(agent, from, to) {
+  const swap = (s) => s.split(from).join(to)
+  const swapItem = (item) => (typeof item === 'string' ? swap(item) : { ...item, body: swap(item.body) })
+  return {
+    research: agent.research.map(swapItem),
+    constraints: agent.constraints.map(swapItem),
+    guardrails: agent.guardrails.map(swap),
+    variations: agent.variations.map(swapItem),
+  }
+}
+
+/* Four slides — research, constraints, guardrails, variations — from an
+   agentsData.js-shaped object. Mirrors aiAgentsDeck.jsx's agentToPart
+   pattern; `idPrefix` keys the slide ids, `label` seeds nav labels. */
+function strategySlides(idPrefix, label, data) {
+  return [
+    { id: `${idPrefix}-research`, kicker: 'Research & Ideation', navLabel: `${label} — research & ideation`, title: 'What the research told us.', layout: 'card-grid', content: { cards: data.research } },
+    { id: `${idPrefix}-constraints`, kicker: 'Constraints', navLabel: `${label} — constraints`, title: 'What we had to design around.', layout: 'card-grid', content: { cards: data.constraints } },
+    { id: `${idPrefix}-guardrails`, kicker: 'Guardrails', navLabel: `${label} — guardrails & principles`, title: 'The rules the agent cannot break.', layout: 'list', content: { items: data.guardrails } },
+    { id: `${idPrefix}-variations`, kicker: 'Design Variations', navLabel: `${label} — variations explored`, title: 'Three directions we built and tested.', layout: 'card-grid', content: { cards: data.variations, numbered: true, minWidth: 280 } },
+  ]
+}
 
 /* ─────────────────────────────────────────────────────────────
    Evolution of AI Automation Agent — presentation deck.
@@ -450,11 +479,11 @@ const phase2 = {
       content: {
         lede: 'Each was prototyped far enough to fail honestly. Naming why they died is what made the canvas defensible.',
         cards: [
-          { title: 'Accordion node canvas', body: 'Killed — collapsing steps into stacked accordions preserved density but destroyed the exact thing users asked for: seeing the whole flow at once.', accent: PALETTE[0] },
-          { title: 'Code-first DSL', body: 'Killed — maximum expressive power, but it made the product unusable for the ops managers who actually build workflows.', accent: PALETTE[1] },
-          { title: 'Wizard / step-by-step', body: 'Killed — excellent for a first workflow, hopeless for the fifth. It optimised onboarding at the cost of every day after.', accent: PALETTE[3] },
+          { title: 'Accordion Node Canvas', badge: 'Killed', Mock: AccordionCanvasMock, mockBg: '#f0ede8', accent: PALETTE[0], body: 'Collapsing steps into stacked accordions preserved density but destroyed the exact thing users asked for: seeing the whole flow at once.' },
+          { title: 'Code-First DSL', badge: 'Killed', Mock: CodeFirstDslMock, mockBg: '#1e1e1e', accent: PALETTE[1], body: 'Maximum expressive power, but it made the product unusable for the ops managers who actually build workflows.' },
+          { title: 'Wizard / Step-by-step', badge: 'Killed', Mock: WizardStepMock, mockBg: '#f0ede8', accent: PALETTE[3], body: 'Excellent for a first workflow, hopeless for the fifth. It optimised onboarding at the cost of every day after.' },
         ],
-        minWidth: 280,
+        minWidth: 290,
       },
     },
     {
@@ -467,12 +496,13 @@ const phase2 = {
       content: {
         lede: 'Marketing automation had already solved visual flow-building. Rather than reinvent it, we studied what each product got right and what it cost them.',
         cards: [
-          { title: 'Mailchimp Customer Journeys', body: 'Clearest mental model for branching. Taught us that a branch must be legible at a glance, not just correct.' },
-          { title: 'Ortto (Autopilot)', body: 'The most fluid canvas interaction. Set our bar for drag, snap and connect feel.' },
-          { title: 'ActiveCampaign', body: 'Deepest conditional logic. Also the clearest warning about what unmanaged complexity looks like.' },
-          { title: 'GetResponse', body: 'Strong template library. Showed how starting points reduce blank-canvas paralysis.' },
-          { title: 'Klaviyo Flows', body: 'Best-in-class inline analytics — performance data shown on the node itself, not in a separate report.' },
+          { title: 'Mailchimp Customer Journeys', banner: asset('/Market/Mailchimp.png'), accent: PALETTE[0], body: 'Clearest mental model for branching — one trigger fanning out into audience paths. Became the "trigger → branch → action" backbone of our canvas.' },
+          { title: 'Ortto (Autopilot)', banner: asset('/Market/Ortto.png'), accent: PALETTE[1], body: 'The most fluid canvas interaction. Validated that a canvas, not a list, is the right paradigm — and inspired our icon-coded node cards.' },
+          { title: 'ActiveCampaign', banner: asset('/Market/ActiveCampaign.png'), accent: PALETTE[2], body: 'Deepest conditional logic and goal-based exits. Inspired our Logical Nodes and the idea that a workflow should know when it is done.' },
+          { title: 'GetResponse', banner: asset('/Market/GetResponse.png'), accent: PALETTE[3], body: 'Time-delay nodes with calendar-aware scheduling. Our Delay and Smart Schedule nodes borrow directly, as does channel mixing inside one flow.' },
+          { title: 'Klaviyo Flows', banner: asset('/Market/klaviyo.png'), accent: PALETTE[4], body: 'Best-in-class inline analytics — performance data shown on the node itself, not in a separate report.' },
         ],
+        minWidth: 290,
       },
     },
     {
@@ -530,15 +560,26 @@ const phase2 = {
       kicker: 'Node Anatomy',
       navLabel: 'Anatomy of a node — V3',
       title: 'Three versions to get one card right.',
-      layout: 'bullets-impact',
+      layout: 'card-grid',
       source: 'Step3 · Ideation Behind the Node Structure',
       content: {
         lede: 'V1 and V2 were rejected for the same reason in different ways: they could not stay readable as the node library grew. V3 is built to absorb new node types without a redesign.',
+        /* The three versions are the point of this slide, so they lead —
+           large, one row, clearly labelled — with the four-point breakdown
+           of what V3 actually does compact underneath. */
+        galleryPosition: 'top',
+        gallery: [
+          { src: asset('/Nodecards/Workflow Cards_V1.png'), alt: 'Node card version 1 — rejected', caption: 'V1 — rejected', aspect: '4 / 3' },
+          { src: asset('/Nodecards/Workflow Cards_V2.png'), alt: 'Node card version 2 — rejected', caption: 'V2 — rejected', aspect: '4 / 3' },
+          { src: asset('/Nodecards/Workflow Cards_V3.png'), alt: 'Node card version 3 — adopted', caption: 'V3 — adopted', aspect: '4 / 3' },
+        ],
+        numbered: true,
+        minWidth: 220,
         cards: [
-          { title: '01 · Medium & module band', body: 'A coloured band identifying channel and module at a glance, before any text is read.' },
-          { title: '02 · Node code + custom name', body: 'A stable system code alongside the user\'s own label, so a flow stays debuggable after being renamed.' },
-          { title: '03 · Content preview text', body: 'The first line of the actual message, so you can audit a flow without opening every node.' },
-          { title: '04 · Functional chips', body: 'Scalable slots for conditions, delays and integrations — the reason V3 survived Phases 3 and 4 unchanged.' },
+          { title: 'Medium & module band', body: 'A coloured band identifying channel and module at a glance, before any text is read.' },
+          { title: 'Node code + custom name', body: 'A stable system code alongside the user\'s own label, so a flow stays debuggable after being renamed.' },
+          { title: 'Content preview text', body: 'The first line of the actual message, so you can audit a flow without opening every node.' },
+          { title: 'Functional chips', body: 'Scalable slots for conditions, delays and integrations — the reason V3 survived Phases 3 and 4 unchanged.' },
         ],
         impact: {
           label: 'Why V3 Won',
@@ -617,24 +658,20 @@ const phase2 = {
       kicker: 'Limitations',
       navLabel: 'Limitations of Phase 2',
       title: 'A powerful canvas with a blunt brain.',
-      layout: 'bullets-impact',
+      layout: 'card-grid',
       source: 'Step3 · Limitations of Phase 2',
       content: {
+        stacked: true,
         cards: [
-          { title: 'The Boolean burden', body: 'Building a list still meant constructing Boolean strings — a skill most recruiters did not have and should not have needed.' },
-          { title: '"Dumb" logic', body: 'Branches could only test explicit fields. The system could route a candidate but never judge one.' },
-          { title: 'Data blind spots', body: 'Workflows ran at scale, but diagnosing why one underperformed still meant exporting to a spreadsheet.' },
+          { title: 'The Boolean burden', banner: img('phase2/booleanBurden.png'), bannerFit: 'contain', accent: PALETTE[2], body: 'Building a list still meant constructing Boolean strings — a skill most recruiters did not have and should not have needed.' },
+          { title: '"Dumb" logic', banner: img('phase2/DumbLogic.png'), bannerFit: 'contain', accent: PALETTE[1], body: 'Branches could only test explicit fields. The system could route a candidate but never judge one.' },
+          { title: 'Data blind spots', banner: img('phase2/Blind.png'), bannerFit: 'contain', accent: PALETTE[0], body: 'Workflows ran at scale, but diagnosing why one underperformed still meant exporting to a spreadsheet.' },
         ],
         impact: {
           label: 'The Realisation',
           statement: 'We had built the nervous system. It had no intelligence.',
           footnote: 'Each of these three limitations became a Phase 3 product: AI Lister, Ask AI and Jarvis.',
         },
-        gallery: [
-          { src: img('phase2/booleanBurden.png'), alt: 'The Boolean burden', caption: 'The Boolean burden' },
-          { src: img('phase2/DumbLogic.png'), alt: 'Dumb logic', caption: '"Dumb" logic' },
-          { src: img('phase2/Blind.png'), alt: 'Data blind spots', caption: 'Data blind spots' },
-        ],
       },
     },
   ],
@@ -673,17 +710,29 @@ const phase3 = {
       },
     },
     {
+      id: 'p3-senseiq',
+      kicker: 'Interaction Design',
+      navLabel: 'Defining the AI interactions',
+      title: 'Designing how AI shows up inside a node.',
+      layout: 'media',
+      source: 'Step4 · Defining Interactions First',
+      content: {
+        lede: 'Before any model work, we specified the interaction grammar: where AI is offered, how a suggestion is accepted, amended or rejected, and what the fallback is when it gets things wrong.',
+        media: { kind: 'video', src: vid('workflow/senseiq-interactions.mp4') },
+      },
+    },
+    {
       id: 'p3-askai',
       kicker: 'Ask AI',
-      navLabel: 'Ask AI — the creative assistant',
-      title: 'Ask AI: the blank-message problem.',
+      navLabel: 'Ask AI — helping recruiters build workflows',
+      title: 'How Ask AI helped in workflows?',
       layout: 'split-media',
       source: 'Step4 · Ask AI',
       content: {
         blocks: [
-          { title: 'The problem', body: 'Every node that sent a message started as an empty text box. Recruiters reused the same three templates because writing a fourth was friction.' },
-          { title: 'The solution', body: 'Generative copy inside the node itself — tone, length and role context supplied by the workflow, so the draft arrives already shaped.' },
-          { title: 'Interactions first', body: 'We designed the interaction model before the model output. Where the AI is invoked, how a draft is accepted or rejected, and what happens on a bad generation all shipped as deliberate design.' },
+          { title: 'The problem', body: 'Ops managers building a workflow would get stuck mid-task — "How do I add a path node?", "What do blackout settings do?" — with no way to find out without leaving the canvas to search docs or ping a teammate.' },
+          { title: 'The solution', body: 'Ask AI answers in plain English, right inside the builder. Ask "how do I add a path node?" and it walks through the exact steps for where you are in the canvas — steps the user then follows directly, in the same screen.' },
+          { title: 'Guided, not generated', body: 'We designed the interaction model around answering questions, not generating content: a contextual entry point, procedural step-by-step responses, and a clear fallback when a question falls outside the canvas.' },
         ],
         media: { kind: 'video', src: vid('ai/ask-ai.mov') },
       },
@@ -704,6 +753,7 @@ const phase3 = {
         media: { kind: 'video', src: vid('ai/ai-listers.mov') },
       },
     },
+    ...strategySlides('p3-lister', 'AI Lister', relabelStrategy(AGENTS.find((a) => a.id === 'senseiq'), 'SenseIQ', 'AI Lister')),
     {
       id: 'p3-jarvis',
       kicker: 'Jarvis',
@@ -720,42 +770,27 @@ const phase3 = {
         media: { kind: 'video', src: vid('ai/jarvis.mov') },
       },
     },
+    ...strategySlides('p3-jarvis', 'Jarvis', AGENTS.find((a) => a.id === 'data')),
     {
       id: 'p3-limitations',
       kicker: 'Limitations',
       navLabel: 'The co-pilot ceiling',
       title: 'The co-pilot ceiling.',
-      layout: 'bullets-impact',
+      layout: 'card-grid',
       source: 'Step4 · Limitations of Phase 3',
       content: {
         lede: 'All three products worked. All three still required a human to press the button — which meant we had made the bottleneck faster without removing it.',
+        stacked: true,
         cards: [
-          { title: 'Assistive, not autonomous', body: 'Every AI action needed a recruiter to trigger and approve it. The human bottleneck moved but never disappeared.' },
-          { title: 'The execution gap', body: 'The system could read and write text but had no sensory capability — it could not make a call, hear an answer or handle a voicemail.' },
-          { title: 'Disconnected brains', body: 'Ask AI, AI Lister and Jarvis each had their own context. Nothing one learned was available to the others.' },
+          { title: 'Assistive, not autonomous', banner: img('phase3/Human Bottleneck.png'), bannerFit: 'contain', accent: PALETTE[4], body: 'Every AI action needed a recruiter to trigger and approve it. The human bottleneck moved but never disappeared.' },
+          { title: 'The execution gap', banner: img('phase3/Execution gap.png'), bannerFit: 'contain', accent: PALETTE[1], body: 'The system could read and write text but had no sensory capability — it could not make a call, hear an answer or handle a voicemail.' },
+          { title: 'Disconnected brains', banner: img('phase3/DisconnectedBrains.png'), bannerFit: 'contain', accent: PALETTE[2], body: 'Ask AI, AI Lister and Jarvis each had their own context. Nothing one learned was available to the others.' },
         ],
         impact: {
           label: 'The Realisation',
           statement: 'Three smart assistants with no shared memory is not a teammate.',
           footnote: 'Phase 4 exists to give the intelligence one memory, one voice and the authority to act on its own.',
         },
-        gallery: [
-          { src: img('phase3/Human Bottleneck.png'), alt: 'The human bottleneck', caption: 'The human bottleneck' },
-          { src: img('phase3/Execution gap.png'), alt: 'The execution gap', caption: 'The execution gap' },
-          { src: img('phase3/DisconnectedBrains.png'), alt: 'Disconnected brains', caption: 'Disconnected brains' },
-        ],
-      },
-    },
-    {
-      id: 'p3-senseiq',
-      kicker: 'Interaction Design',
-      navLabel: 'Defining the AI interactions',
-      title: 'Designing how AI shows up inside a node.',
-      layout: 'media',
-      source: 'Step4 · Defining Interactions First',
-      content: {
-        lede: 'Before any model work, we specified the interaction grammar: where AI is offered, how a suggestion is accepted, amended or rejected, and what the fallback is when it gets things wrong.',
-        media: { kind: 'video', src: vid('workflow/senseiq-interactions.mp4') },
       },
     },
   ],
@@ -794,13 +829,27 @@ const phase4 = {
       },
     },
     {
-      id: 'p4-builder',
-      kicker: 'The Foundation',
-      navLabel: 'Multimodal Agent Builder',
-      title: 'The Multimodal Agent Builder.',
-      layout: 'bullets-impact',
-      source: 'Step5 · Step 1: Multimodal Agent Builder',
+      id: 'p4-discover',
+      kicker: 'Step 1 · Sourcing',
+      navLabel: 'Discover Agent (the Sourcer)',
+      title: 'Discover Agent — the Sourcer.',
+      layout: 'media',
+      source: 'Step5 · Discover Agent',
       content: {
+        lede: 'Deep Match surfaces the strongest candidates from the database without a manual search — combining skills, location, availability and behavioural signals, and stopping at a goal the agency sets.',
+        media: { kind: 'image', src: img('phase4/discover.png'), alt: 'Discover Agent interface' },
+      },
+    },
+    ...strategySlides('p4-discover', 'Discover Agent', AGENTS.find((a) => a.id === 'matching')),
+    {
+      id: 'p4-builder',
+      kicker: 'Step 2 · Screening',
+      navLabel: 'Voice Agent — the Multimodal Agent Builder',
+      title: 'Built on the Multimodal Agent Builder.',
+      layout: 'bullets-impact',
+      source: 'Step5 · Step 2: Voice Agent (Multimodal Agent Builder foundation)',
+      content: {
+        lede: 'Legacy bots were rigid — if a candidate on SMS said "Can you call me?", the bot broke because it had no memory or voice capability. The Voice Agent is built on a no-code Multimodal Agent Builder designed to fix exactly that.',
         cards: [
           { title: 'Block-based architecture', body: 'Agents assembled from composable blocks rather than configured through forms — the Lego principle, applied one level up.' },
           { title: 'Context store', body: 'The shared memory Phase 3 lacked. What the voice agent hears is available to the evaluator without a handoff.' },
@@ -814,59 +863,22 @@ const phase4 = {
       },
     },
     {
-      id: 'p4-voice-demo',
-      kicker: 'Voice',
-      navLabel: 'The Voice Agent in action',
-      title: 'The agent takes the call.',
-      layout: 'media',
-      source: 'Step5 · voice-agent video',
-      content: {
-        media: { kind: 'video', src: vid('ai/voice-agent.mov') },
-        caption: 'Dynamic questions generated from the job description, with retry and voicemail handling built in.',
-      },
-    },
-    {
-      id: 'p4-grace',
-      kicker: 'The Orchestrator',
-      navLabel: 'Grace — the AI Recruiter',
-      title: 'Grace does not do the work. She delegates it.',
-      layout: 'split-media',
-      source: 'Step5 · Step 2: Grace (AI Recruiter)',
-      content: {
-        blocks: [
-          { title: 'The concept', body: 'When a job order arrives, Grace activates the Discover Agent, deploys the Voice Agent, instructs the Evaluation Agent, and closes with an ATS writeback — without a recruiter logging in.' },
-          { title: 'Why framing mattered', body: 'Research showed recruiters trusted Grace far more when she was framed as a supervised colleague than as a tool to operate. We changed the UI language from "configure agent" to "set goals for Grace" and adoption moved.' },
-        ],
-        media: { kind: 'image', src: img('phase4/HeroImage.png'), alt: 'Grace, the AI Recruiter' },
-      },
-    },
-    {
-      id: 'p4-discover',
-      kicker: 'Sub-Agent 01',
-      navLabel: 'Discover Agent (the Sourcer)',
-      title: 'Discover Agent — the Sourcer.',
-      layout: 'media',
-      source: 'Step5 · Discover Agent',
-      content: {
-        lede: 'Deep Match surfaces the strongest candidates from the database without a manual search — combining skills, location, availability and behavioural signals, and stopping at a goal the agency sets.',
-        media: { kind: 'image', src: img('phase4/discover.png'), alt: 'Discover Agent interface' },
-      },
-    },
-    {
       id: 'p4-voice',
-      kicker: 'Sub-Agent 02',
+      kicker: 'Sub-Agent',
       navLabel: 'Voice Agent (the Screener)',
       title: 'Voice Agent — the Screener.',
       layout: 'media',
       source: 'Step5 · Voice Agent',
       content: {
         lede: 'Calls candidates and screens them with questions the Dynamic Question Module generates from the job description at runtime. It always discloses that it is AI, always allows escalation to a human, and switches to SMS when voice fails.',
-        media: { kind: 'image', src: img('phase4/Evaluation.png'), alt: 'Voice Agent screening' },
+        media: { kind: 'video', src: vid('ai/voice-agent.mov') },
+        caption: 'Dynamic questions generated from the job description, with retry and voicemail handling built in.',
       },
     },
+    ...strategySlides('p4-voice', 'Voice Agent', AGENTS.find((a) => a.id === 'voice')),
     {
       id: 'p4-evaluation',
-      kicker: 'Sub-Agent 03',
+      kicker: 'Step 3 · Decision',
       navLabel: 'Evaluation Agent (the Judge)',
       title: 'Evaluation Agent — the Judge.',
       layout: 'split-media',
@@ -880,6 +892,23 @@ const phase4 = {
         media: { kind: 'image', src: img('phase4/Evaluation Summary.png'), alt: 'Evaluation summary' },
       },
     },
+    ...strategySlides('p4-evaluation', 'Evaluation Agent', AGENTS.find((a) => a.id === 'screening')),
+    {
+      id: 'p4-grace',
+      kicker: 'Step 4 · Orchestration',
+      navLabel: 'Grace — the AI Recruiter',
+      title: 'Grace does not do the work. She delegates it.',
+      layout: 'split-media',
+      source: 'Step5 · Step 4: Grace (AI Recruiter)',
+      content: {
+        blocks: [
+          { title: 'The concept', body: 'When a job order arrives, Grace activates the Discover Agent, deploys the Voice Agent, instructs the Evaluation Agent, and closes with an ATS writeback — without a recruiter logging in.' },
+          { title: 'Why framing mattered', body: 'Research showed recruiters trusted Grace far more when she was framed as a supervised colleague than as a tool to operate. We changed the UI language from "configure agent" to "set goals for Grace" and adoption moved.' },
+        ],
+        media: { kind: 'image', src: img('phase4/HeroImage.png'), alt: 'Grace, the AI Recruiter' },
+      },
+    },
+    ...strategySlides('p4-grace', 'Grace', AGENTS.find((a) => a.id === 'ai-recruiter')),
     {
       id: 'p4-autosubmission',
       kicker: 'Use Case',

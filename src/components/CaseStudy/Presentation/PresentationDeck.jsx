@@ -300,6 +300,9 @@ export default function PresentationDeck({ deck, initialSlide = 0, onExit }) {
         }
         .pd-dot:hover { background: rgba(0,0,0,0.45) !important; }
         .pd-img-frame:hover .pd-expand { opacity: 1; }
+        /* Panorama frames get a shorter fixed height on small or short screens. */
+        @media (max-height: 760px) { .pd-wide .cs-media-frame { height: 340px !important; } }
+        @media (max-width: 768px)  { .pd-wide .cs-media-frame { height: 260px !important; } }
         .pd-img-frame:hover {
           transform: translateY(-2px);
           box-shadow: 0 10px 34px rgba(0,0,0,0.1) !important;
