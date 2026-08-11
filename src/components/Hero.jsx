@@ -217,6 +217,29 @@ export default function Hero() {
               >
                 <span>Contact</span>
               </a>
+              <a
+                href="#/about/present/1"
+                onClick={(e) => { e.preventDefault(); window.location.hash = '/about/present/1' }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '14px 20px',
+                  fontSize: '15px',
+                  fontWeight: 500,
+                  color: '#555',
+                  background: 'transparent',
+                  border: 'none',
+                  borderRadius: '999px',
+                  cursor: 'pointer',
+                  transition: 'color 0.2s ease, background 0.2s ease',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#111'; e.currentTarget.style.background = 'rgba(0,0,0,0.04)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = '#555'; e.currentTarget.style.background = 'transparent' }}
+              >
+                <span>Learn more</span>
+                <span style={{ fontSize: '17px', fontWeight: 300 }}>→</span>
+              </a>
             </div>
           </div>
 

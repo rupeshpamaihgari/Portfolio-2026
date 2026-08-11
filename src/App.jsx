@@ -16,6 +16,7 @@ import AIAgentsCasePage from './components/CaseStudy/AIAgentsCasePage'
 import PresentationDeck, { countSlides } from './components/CaseStudy/Presentation/PresentationDeck'
 import evolutionDeck, { slideIndexForStep } from './components/CaseStudy/Presentation/decks/evolutionDeck'
 import aiAgentsDeck, { slideIndexForAgent } from './components/CaseStudy/Presentation/decks/aiAgentsDeck'
+import aboutDeck from './components/CaseStudy/Presentation/decks/aboutDeck'
 
 function parseRoute() {
   const raw = window.location.hash.replace(/^#\/?/, '')
@@ -43,6 +44,17 @@ function App() {
   }
 
   const { head, a, b } = route
+
+  if (head === 'about' && a === 'present') {
+    return (
+      <PresentationDeck
+        key={aboutDeck.id}
+        deck={aboutDeck}
+        initialSlide={toSlideIndex(b, countSlides(aboutDeck))}
+        onExit={() => navigate('')}
+      />
+    )
+  }
 
   if (head === 'AiAgents' && a === 'present') {
     return (

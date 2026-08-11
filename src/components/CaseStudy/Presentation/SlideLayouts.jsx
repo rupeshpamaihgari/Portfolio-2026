@@ -11,6 +11,27 @@ import { CaseStudyVideo, CaseStudyScrollableImage, Lightbox } from '../CaseStudy
 
 export const PALETTE = ['#F4A58A', '#B8D4F8', '#B8F4D4', '#F8E4A0', '#D4B8F8', '#c8f4f0', '#f4c8d4', '#e4d4f8']
 
+/* Darkens a hex color toward black by `amt` (0–1) — the pastel accent
+   palette reads too light for bold text on a white card. */
+function darken(hex, amt = 0.4) {
+  const n = hex.replace('#', '')
+  const r = parseInt(n.slice(0, 2), 16), g = parseInt(n.slice(2, 4), 16), b = parseInt(n.slice(4, 6), 16)
+  const mix = (c) => Math.round(c * (1 - amt))
+  return `rgb(${mix(r)}, ${mix(g)}, ${mix(b)})`
+}
+
+/* Wraps number-like tokens ($5M+, 80%, 1,101, 11.1) in a bold span so
+   metrics pop out of body copy without hand-authoring JSX per string. */
+const NUMBER_RE = /(\$?\d[\d,]*(?:\.\d+)?(?:[KMB])?\+?%?)/g
+function highlightNumbers(text, color = '#111') {
+  if (typeof text !== 'string') return text
+  // split() with a capturing group alternates [text, match, text, match, ...] —
+  // odd indices are always the captured number tokens.
+  return text.split(NUMBER_RE).map((part, i) =>
+    i % 2 === 1 ? <strong key={i} style={{ color, fontWeight: 700 }}>{part}</strong> : part
+  )
+}
+
 /* The site's existing dark hero mesh — reused for cover + impact cards */
 const DARK_MESH = 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 40%, #16213e 70%, #1a1a1a 100%)'
 const DOT_GRID = 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)'
@@ -255,7 +276,7 @@ function TitleSlide({ slide, accent }) {
 /* ── 2. Section divider ──────────────────────────────────────── */
 
 function SectionDivider({ slide, accent, ctx }) {
-  const { number, label, thesis } = slide.content || {}
+  const { number, label, thesis, stat } = slide.content || {}
   const partCount = ctx?.partCount ?? 0
   const partIndex = ctx?.partIndex ?? 0
 
@@ -280,6 +301,23 @@ function SectionDivider({ slide, accent, ctx }) {
           <p style={{ fontFamily: FONT_B, fontSize: '17px', lineHeight: 1.75, color: '#555', maxWidth: '640px', margin: 0 }}>
             {thesis}
           </p>
+        )}
+        {stat && (
+          <div
+            style={{
+              display: 'inline-flex', alignItems: 'baseline', gap: '14px',
+              background: '#fff', borderRadius: '18px', padding: '18px 26px',
+              marginTop: '22px', border: '1px solid rgba(0,0,0,0.06)',
+              boxShadow: `0 8px 28px ${accent}33`, borderLeft: `4px solid ${accent}`,
+            }}
+          >
+            <span style={{ fontFamily: FONT_H, fontSize: 'clamp(34px, 4.4vw, 52px)', fontWeight: 800, letterSpacing: '-0.03em', color: '#111', lineHeight: 1 }}>
+              {stat.value}
+            </span>
+            <span style={{ fontFamily: FONT_B, fontSize: '13.5px', fontWeight: 600, color: '#666', lineHeight: 1.4, maxWidth: '220px' }}>
+              {stat.label}
+            </span>
+          </div>
         )}
         {partCount > 0 && (
           <div style={{ display: 'flex', gap: '7px', marginTop: '36px' }}>
@@ -320,7 +358,7 @@ function BulletsImpact({ slide, accent }) {
               </span>
               <div style={{ minWidth: 0 }}>
                 {c.title && <div style={{ ...ST.cardTitle, marginBottom: '6px' }}>{c.title}</div>}
-                <p style={{ fontFamily: FONT_B, fontSize: '13.5px', lineHeight: 1.7, color: '#555', margin: 0 }}>{c.body}</p>
+                <p style={{ fontFamily: FONT_B, fontSize: '13.5px', lineHeight: 1.7, color: '#555', margin: 0 }}>{highlightNumbers(c.body, darken(accent, 0.45))}</p>
               </div>
             </div>
           ))}
