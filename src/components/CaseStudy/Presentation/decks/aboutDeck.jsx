@@ -304,7 +304,7 @@ function OwnershipMap() {
    real screenshot/video from each phase beneath, pulled from the case
    study's own assets so the plan isn't just described, it's shown. */
 const STRATEGY_PHASES = [
-  { n: 1, title: 'Phase 1 · Siloed', body: 'Eight point solutions, each solving one problem in isolation.', kind: 'image', src: '/illustrations/case-study/phase1/Journeys_1.png', alt: 'Journeys 1.0 — one of eight siloed point solutions' },
+  { n: 1, title: 'Phase 1 · Siloed', body: 'Eight point solutions, each solving one problem in isolation.', kind: 'video', src: '/videos/ai/reusable-lists.mov', alt: 'Reusable Lists — one of eight siloed point solutions' },
   { n: 2, title: 'Phase 2 · Unification', body: 'One workflow builder — modular nodes, real branching, a single canvas.', kind: 'video', src: '/videos/ai/sense-workflows-video.mp4', alt: 'The unified workflow builder canvas' },
   { n: 3, title: 'Phase 3 · Intelligence', body: 'An assistive layer — natural-language lists, conversational analytics, in-context help.', kind: 'video', src: '/videos/ai/ask-ai.mov', alt: 'Ask AI, the in-context intelligence layer' },
   { n: 4, title: 'Phase 4 · Agentic', body: 'Autonomous agents that source, screen, evaluate and submit — the system acts, the recruiter supervises.', kind: 'image', src: '/illustrations/case-study/phase4/HeroImage.png', alt: 'Grace, the autonomous AI Recruiter' },
@@ -637,7 +637,7 @@ const impact = {
         ],
         impact: {
           label: 'The Headline',
-          statement: '$5M+ booked ARR.',
+          statement: '$5M+ booked ARR in 2 months of AI Recruiter.',
           footnote: 'The strategy did not just ship features — it moved the numbers the business is measured on.',
         },
       },
