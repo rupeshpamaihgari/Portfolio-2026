@@ -691,7 +691,7 @@ function ArrowConnector() {
 }
 
 // ── WorkflowIllustration ───────────────────────────────────────────────────
-function WorkflowIllustration({ outerRef }) {
+export function WorkflowIllustration({ outerRef }) {
   const containerRef = useRef(null)
   const tiltRefs     = useRef([])
   const rotRef       = useRef({ targetX: 0, targetY: 0, currentX: 0, currentY: 0 })

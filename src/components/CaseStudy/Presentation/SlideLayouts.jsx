@@ -186,7 +186,7 @@ function SlideImage({ src, alt = '', scrollFrame, scrollHeight = 430, pan = fals
   )
 }
 
-function Media({ media }) {
+export function Media({ media }) {
   if (!media) return null
   const { kind = 'image', src, alt = '', scrollFrame, pan = false } = media
   if (kind === 'video') return <CaseStudyVideo src={src} style={{ margin: 0 }} />
@@ -467,7 +467,7 @@ function CardVisual({ c }) {
 /* A slim, non-sticky highlight strip — for when a slide needs a punchline
    but the images are the point, so the dark card from bullets-impact would
    compete with them for space instead of the cards taking a whole column. */
-function ImpactStrip({ impact, accent }) {
+export function ImpactStrip({ impact, accent }) {
   if (!impact) return null
   return (
     <div style={{ background: DARK_MESH, borderRadius: '16px', padding: '20px 26px', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', gap: '18px', flexWrap: 'wrap' }}>

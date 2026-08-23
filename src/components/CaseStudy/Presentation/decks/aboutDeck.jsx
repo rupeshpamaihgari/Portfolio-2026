@@ -50,7 +50,7 @@ const PRINCIPLES = [
 /* KPI stat cards (MetricWall's visual recipe) + condensed experience
    cards beneath, on one slide — mirrors the site's top stats plus
    the four ExperienceSection eras, each cut to a 2-line description. */
-function NumbersAndExperience() {
+export function NumbersAndExperience() {
   const stats = [
     { value: '11+', label: 'Years of experience' },
     { value: '15+', label: '0→1 SaaS products shipped' },
@@ -90,7 +90,7 @@ function NumbersAndExperience() {
 
 /* Achievement cards — same visual recipe as the site's AchievementsSection
    cards, condensed to a 2-line description, its own slide. */
-function Achievements() {
+export function Achievements() {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '14px' }}>
       {ACHIEVEMENTS.map((a) => (
@@ -180,7 +180,7 @@ function HierBlob({ x, y, r, label, owned, isRoot }) {
   )
 }
 
-function PillarHierarchy() {
+export function PillarHierarchy() {
   return (
     <div>
       <div style={{ position: 'relative', width: '100%', paddingBottom: `${(HIER_H / HIER_W) * 100}%` }}>

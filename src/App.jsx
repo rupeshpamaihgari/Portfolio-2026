@@ -17,6 +17,7 @@ import PresentationDeck, { countSlides } from './components/CaseStudy/Presentati
 import evolutionDeck, { slideIndexForStep } from './components/CaseStudy/Presentation/decks/evolutionDeck'
 import aiAgentsDeck, { slideIndexForAgent } from './components/CaseStudy/Presentation/decks/aiAgentsDeck'
 import aboutDeck from './components/CaseStudy/Presentation/decks/aboutDeck'
+import automationsDeck from './components/CaseStudy/Presentation/decks/automationsDeck'
 
 function parseRoute() {
   const raw = window.location.hash.replace(/^#\/?/, '')
@@ -51,6 +52,17 @@ function App() {
         key={aboutDeck.id}
         deck={aboutDeck}
         initialSlide={toSlideIndex(b, countSlides(aboutDeck))}
+        onExit={() => navigate('')}
+      />
+    )
+  }
+
+  if (head === 'automations' && a === 'present') {
+    return (
+      <PresentationDeck
+        key={automationsDeck.id}
+        deck={automationsDeck}
+        initialSlide={toSlideIndex(b, countSlides(automationsDeck))}
         onExit={() => navigate('')}
       />
     )
