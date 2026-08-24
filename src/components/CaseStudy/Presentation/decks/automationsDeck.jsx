@@ -170,28 +170,6 @@ const PLATFORM_PHASES = [
 function PlatformShift() {
   return (
     <div>
-      {/* The one-line thesis the whole four-phase arc serves. */}
-      <div
-        style={{
-          background: '#fff', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.05)',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.05)', padding: '20px 26px',
-          marginBottom: '22px', textAlign: 'center',
-        }}
-      >
-        <span style={{ ...ST.kicker, display: 'block', color: '#aaa', marginBottom: '12px' }}>The Shift</span>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'clamp(12px, 3vw, 24px)', flexWrap: 'wrap' }}>
-          <span style={{ fontFamily: FONT_H, fontSize: 'clamp(15px, 2vw, 21px)', fontWeight: 500, color: '#bbb' }}>
-            System of Record
-          </span>
-          <svg width="46" height="12" viewBox="0 0 46 12" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-            <path d="M1 6h38M34 1.5 39 6l-5 4.5" stroke="#111" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          <span style={{ fontFamily: FONT_H, fontSize: 'clamp(17px, 2.4vw, 25px)', fontWeight: 700, letterSpacing: '-0.02em', color: '#111' }}>
-            System of Action
-          </span>
-        </div>
-      </div>
-
       <div className="pd-flow" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', gap: '10px' }}>
         {PLATFORM_PHASES.map((p, i) => (
           <div key={p.n} style={{ display: 'flex', alignItems: 'stretch', gap: '10px', flex: '1 1 190px', minWidth: 0 }}>
@@ -1104,8 +1082,8 @@ const context = {
               { title: 'What is Sense?', body: 'An enterprise Talent Engagement Platform used by staffing agencies to accelerate hiring — it syncs bi-directionally with an ATS and automates communication across the entire candidate lifecycle, from first outreach to placement.' },
               { title: 'About this project', body: 'The Workflow Automation Builder — the canvas that unified eight disconnected point solutions into one system where every reusable piece could finally be composed into a single, visible flow.' },
               { title: 'Why it matters to Sense', body: 'Automations is the backbone the rest of the platform runs on — the AI recruiter agents built on top of this same canvas now drive roughly 80% of Sense\'s revenue, making this builder one of the highest-leverage products at the company.' },
-            ].map((b) => (
-              <ComplexityBlock key={b.title} accent={accent} title={b.title} body={b.body} />
+            ].map((b, i) => (
+              <NumberedCard key={b.title} n={String(i + 1).padStart(2, '0')} title={b.title} body={b.body} accent={accent} />
             ))}
           </div>
           <PlatformShift />
