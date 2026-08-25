@@ -545,10 +545,253 @@ const evolution = {
           <p style={{ fontFamily: FONT_B, fontSize: '12px', color: '#888', margin: '4px 2px 0' }}>How I structure recurring touchpoints across research, product, engineering and leadership.</p>
           <CaseStudyImage src={asset('/illustrations/case-study/Collaboration_Calendar.png')} alt="Typical collaboration calendar" style={{ margin: '20px 0 0' }} />
           <p style={{ fontFamily: FONT_B, fontSize: '12px', color: '#888', margin: '4px 2px 0' }}>A typical week — busy, but run through a consistent Research → Define → Validate → Design → Build → QA → Launch framework.</p>
+          <DecisionFramework />
         </>
       ),
     },
   ],
+}
+
+/* ── Decision framework — how I act across domains ────────────
+   Three bands of ownership × who's driving; each row shows the
+   situation, my stance as a pill, and the hold/commit rule of
+   engagement. Right column stays parallel to the left so the whole
+   thing reads as a single decision table. Bottom: four cards of
+   universal rules that apply across every band. */
+
+const STANCE = {
+  hold: { label: 'Hold the line', bg: '#F4A58A' },
+  advocate: { label: 'Advocate, then commit', bg: '#B8D4F8' },
+  support: { label: 'Actively support', bg: '#B8F4D4' },
+  outOfWay: { label: 'Out of the way, not silent', bg: '#F8E4A0' },
+  driveAll: { label: 'Drive only with all three', bg: '#D4B8F8' },
+  highest: { label: 'Highest bar of all', bg: '#f4c8d4' },
+}
+
+const DECISION_BANDS = [
+  {
+    n: '01',
+    heading: 'In my domain, driven by others',
+    lede: 'I engage every time. Silence here is abdication.',
+    rows: [
+      {
+        situation: 'Product-led design decisions',
+        stance: STANCE.advocate,
+        rule: [
+          { verb: 'Hold', body: 'if one-way door and I have evidence — testing, usage data, failed alternatives.' },
+          { verb: 'Commit', body: 'if business rationale is sound and the door is two-way. Document what we watch.' },
+        ],
+      },
+      {
+        situation: 'Engineering-led design decisions',
+        stance: STANCE.support,
+        rule: [
+          { verb: 'Hold', body: 'if it breaks an experience principle or sets a pattern we pay for everywhere.' },
+          { verb: 'Commit', body: 'if it saves real cost and the UX delta stays contained.' },
+        ],
+      },
+    ],
+  },
+  {
+    n: '02',
+    heading: 'In their domain, driven by me',
+    lede: "My bar for speaking is higher here, not lower. I'm a guest.",
+    rows: [
+      {
+        situation: 'Design-led product decisions',
+        stance: STANCE.driveAll,
+        rule: [{ verb: null, body: "Evidence, a tested rationale for why alternatives are worse, and a link to a business outcome. Without those I'm proposing, not driving." }],
+      },
+      {
+        situation: 'Design-led engineering decisions',
+        stance: STANCE.highest,
+        rule: [{ verb: null, body: 'User impact severe, product already aligned. I bring the problem and the threshold — never the technical solution.' }],
+      },
+    ],
+  },
+  {
+    n: '03',
+    heading: 'In their domain, driven by them',
+    lede: "Not my domain. I'm out of the way by choice — which is not the same as neutral.",
+    rows: [
+      {
+        situation: 'Product-led engineering decisions  ·  Engineering-led product decisions',
+        stance: STANCE.outOfWay,
+        rule: [{ verb: null, body: "Scope, sequencing, timelines and architecture live here. One trigger to speak: a downstream experience cost neither of them can see. I don't take a side — I make the invisible cost visible, then hand the decision back." }],
+      },
+    ],
+  },
+]
+
+const MY_RULES = [
+  { title: 'One-way vs two-way doors', body: 'I spend capital on the irreversible ones and let data correct the rest.', accent: PALETTE[0] },
+  { title: 'Evidence vs opinion', body: "I label which one I'm holding. That's why people trust me when I press.", accent: PALETTE[1] },
+  { title: 'Disagree and commit', body: "I'd rather lose cleanly with the trade-off documented than win by attrition.", accent: PALETTE[2] },
+  { title: 'The upstream fix', body: 'Frequent pushback means design arrived too late. Fix the timing, not the volume.', accent: PALETTE[3] },
+]
+
+function DecisionFramework() {
+  const bandColColor = '#888'
+  const dividerColor = 'rgba(0,0,0,0.09)'
+  const softDivider = 'rgba(0,0,0,0.05)'
+
+  return (
+    <div style={{ marginTop: '32px' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '9px', marginBottom: '4px' }}>
+        <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: PALETTE[3], flexShrink: 0 }} />
+        <span style={{ fontFamily: FONT_B, fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#999' }}>
+          Decision Framework
+        </span>
+      </div>
+      <h3 style={{ fontFamily: FONT_H, fontSize: 'clamp(20px, 2.2vw, 26px)', fontWeight: 700, letterSpacing: '-0.02em', color: '#111', margin: '2px 0 6px' }}>
+        How I act across different situations
+      </h3>
+      <p style={{ fontFamily: FONT_B, fontSize: '13.5px', lineHeight: 1.7, color: '#666', margin: '0 0 22px', maxWidth: '680px' }}>
+        Same designer, different postures depending on whose domain it is and who's driving. The rule I follow — hold, advocate, support, or stay out of the way — is set before the meeting, not during it.
+      </p>
+
+      {/* Matrix — a real table, not a stack of cards. Fixed 4-column
+          grid: band label · situation · stance pill · rule of engagement.
+          Wrapped in a single white card so the whole thing reads as one
+          framework rather than as bare text on the page background. */}
+      <div
+        style={{
+          background: '#fff', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.05)',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.05)', padding: '8px 22px 4px',
+        }}
+      >
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '128px 1.2fr 170px 1.6fr',
+          borderTop: `1px solid ${dividerColor}`,
+          borderBottom: `1px solid ${dividerColor}`,
+          fontFamily: FONT_B,
+        }}
+      >
+        {/* Header row */}
+        {['Band', 'Situation', 'My stance', 'Rule of engagement'].map((h, i) => (
+          <div
+            key={h}
+            style={{
+              fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase',
+              color: '#aaa', padding: '10px 14px 10px 0',
+              borderBottom: `1px solid ${dividerColor}`,
+              paddingLeft: i === 0 ? 0 : '14px',
+            }}
+          >
+            {h}
+          </div>
+        ))}
+
+        {DECISION_BANDS.map((band) => {
+          const rows = band.rows.length
+          return band.rows.map((row, i) => {
+            const isFirst = i === 0
+            const isLast = i === rows - 1
+            const cellStyle = {
+              padding: '18px 14px 18px 0',
+              borderBottom: isLast ? 'none' : `1px solid ${softDivider}`,
+            }
+            return (
+              <div key={`${band.n}-${row.situation}`} style={{ display: 'contents' }}>
+                {/* Band label — only rendered on the first row of a band,
+                    spanning the rest via grid-row so the whole band reads
+                    as a unit without repeating the label. */}
+                {isFirst ? (
+                  <div
+                    style={{
+                      gridRow: `span ${rows}`,
+                      borderBottom: `1px solid ${dividerColor}`,
+                      paddingRight: '18px',
+                      paddingTop: '18px',
+                    }}
+                  >
+                    <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', color: bandColColor, marginBottom: '6px' }}>
+                      BAND {band.n}
+                    </div>
+                    <div style={{ fontFamily: FONT_H, fontSize: '15px', fontWeight: 700, color: '#111', lineHeight: 1.25, letterSpacing: '-0.01em', marginBottom: '8px' }}>
+                      {band.heading}
+                    </div>
+                    <div style={{ fontSize: '11.5px', color: '#888', lineHeight: 1.55, fontStyle: 'italic' }}>
+                      {band.lede}
+                    </div>
+                  </div>
+                ) : null}
+
+                <div style={{ ...cellStyle, paddingLeft: '14px', fontSize: '13.5px', fontWeight: 650, color: '#111' }}>
+                  {row.situation}
+                </div>
+
+                <div style={{ ...cellStyle, paddingLeft: '14px' }}>
+                  <span
+                    style={{
+                      display: 'inline-block', fontSize: '11px', fontWeight: 700, color: '#111',
+                      background: row.stance.bg, padding: '4px 11px', borderRadius: '999px',
+                      letterSpacing: '0.02em', whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {row.stance.label}
+                  </span>
+                </div>
+
+                <div style={{ ...cellStyle, paddingLeft: '14px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {row.rule.map((r, j) => (
+                    <p key={j} style={{ fontSize: '13px', lineHeight: 1.65, color: '#444', margin: 0 }}>
+                      {r.verb && <strong style={{ color: '#111', fontWeight: 700, marginRight: '6px' }}>{r.verb}</strong>}
+                      {r.body}
+                    </p>
+                  ))}
+                </div>
+
+                {/* Close the band with a thicker divider under the last row */}
+                {isLast && (
+                  <div style={{ gridColumn: '1 / -1', height: 0, borderBottom: `1px solid ${dividerColor}` }} />
+                )}
+              </div>
+            )
+          })
+        })}
+      </div>
+      </div>
+
+      {/* My rules — four cards, matching the deck's standard top-accent
+          NumberedCard recipe used elsewhere. */}
+      <div style={{ marginTop: '30px' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '9px', marginBottom: '14px' }}>
+          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: PALETTE[0], flexShrink: 0 }} />
+          <span style={{ fontFamily: FONT_B, fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#999' }}>
+            My Rules — across every band
+          </span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: '14px' }}>
+          {MY_RULES.map((r, i) => (
+            <div
+              key={r.title}
+              style={{
+                background: '#fff', borderRadius: '16px', border: '1px solid rgba(0,0,0,0.05)',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.05)', padding: '18px 20px',
+                position: 'relative', overflow: 'hidden',
+              }}
+            >
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: r.accent }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <span style={{ fontFamily: FONT_B, fontSize: '11px', fontWeight: 700, color: r.accent, letterSpacing: '0.06em', fontVariantNumeric: 'tabular-nums' }}>
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span style={{ fontFamily: FONT_B, fontSize: '13.5px', fontWeight: 700, color: '#111', letterSpacing: '-0.01em' }}>
+                  {r.title}
+                </span>
+              </div>
+              <p style={{ fontFamily: FONT_B, fontSize: '12.5px', lineHeight: 1.65, color: '#555', margin: 0 }}>
+                {r.body}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 /* ── Part 3 — Strategic Impact ───────────────────────────────── */
