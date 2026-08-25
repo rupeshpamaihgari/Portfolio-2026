@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { asset } from '../../../../utils/asset'
 import { PALETTE } from '../SlideLayouts'
 import { CaseStudyImage, CaseStudyVideo } from '../../CaseStudyMedia'
@@ -630,7 +631,321 @@ const MY_RULES = [
   { title: 'The upstream fix', body: 'Frequent pushback means design arrived too late. Fix the timing, not the volume.', accent: PALETTE[3] },
 ]
 
+/* One arrow per situation, mapping the "led by" party to the "owned by"
+   party. Rule is an array of {verb?, body} clauses so Band 1's Hold/
+   Commit structure can render as separate highlighted lines in the
+   tooltip and the fallback list. */
+const CONNECTIONS = [
+  { from: 'P', to: 'D', label: 'Product-led design decisions', stance: STANCE.advocate,
+    rule: [
+      { verb: 'Hold', body: "if it's a one-way door and I have evidence — testing, usage data, failed alternatives." },
+      { verb: 'Commit', body: 'if business rationale is sound and the door is two-way. Document what we watch.' },
+    ] },
+  { from: 'E', to: 'D', label: 'Engineering-led design decisions', stance: STANCE.support,
+    rule: [
+      { verb: 'Hold', body: 'if it breaks an experience principle or sets a pattern we pay for everywhere.' },
+      { verb: 'Commit', body: 'if it saves real cost and the UX delta stays contained.' },
+    ] },
+  { from: 'D', to: 'P', label: 'Design-led product decisions', stance: STANCE.driveAll,
+    rule: [
+      { body: "Evidence, a tested rationale for why alternatives are worse, and a link to a business outcome. Without those I'm proposing, not driving." },
+    ] },
+  { from: 'D', to: 'E', label: 'Design-led engineering decisions', stance: STANCE.highest,
+    rule: [
+      { body: 'User impact severe, product already aligned. I bring the problem and the threshold — never the technical solution.' },
+    ] },
+  { from: 'P', to: 'E', label: 'Product-led engineering decisions', stance: STANCE.outOfWay,
+    rule: [
+      { body: "Out of the way by choice. One trigger to speak: a downstream experience cost neither side can see. Make it visible, then hand the decision back." },
+    ] },
+  { from: 'E', to: 'P', label: 'Engineering-led product decisions', stance: STANCE.outOfWay,
+    rule: [
+      { body: "Out of the way by choice. One trigger to speak: a downstream experience cost neither side can see. Make it visible, then hand the decision back." },
+    ] },
+]
+
+const DISCIPLINES = [
+  { key: 'P', label: 'Product', icon: '📋' },
+  { key: 'D', label: 'Design', icon: '🎨' },
+  { key: 'E', label: 'Engineering', icon: '⚙️' },
+]
+
+/* Visual layout constants. Left column = "Decision led by", right =
+   "Domain owned by". Each side has 3 boxes stacked vertically. Rows
+   are spaced far enough apart (200 units per row) that all six curved
+   arrows can hold their own pill without any pair colliding — see the
+   `bend` derivation in endpoints for the exact spacing math. */
+const V = {
+  W: 820,
+  H: 560,
+  boxW: 170,
+  boxH: 80,
+  leftX: 20,
+  rightX: 630,
+  rowYs: { P: 40, D: 240, E: 440 },   // top-y for each row (200 apart)
+  headerY: 4,
+}
+
+/* For each source box, order its outgoing arrows so we can stagger
+   them slightly (top vs bottom half of the box). Same for incoming. */
+function orderIndex(list, matchFn) {
+  return list.filter(matchFn)
+}
+
+function DecisionFrameworkVisual() {
+  const [hover, setHover] = useState(null) // connection index or null
+
+  // Precompute endpoint coords for each connection with staggering.
+  const outByBox = { P: [], D: [], E: [] }
+  const inByBox = { P: [], D: [], E: [] }
+  CONNECTIONS.forEach((c, i) => {
+    outByBox[c.from].push(i)
+    inByBox[c.to].push(i)
+  })
+
+  const endpoints = CONNECTIONS.map((c, i) => {
+    const outList = outByBox[c.from]
+    const inList = inByBox[c.to]
+    const outIdx = outList.indexOf(i)
+    const inIdx = inList.indexOf(i)
+    const outCount = outList.length
+    const inCount = inList.length
+
+    // Stagger endpoints inside each box so two arrows sharing a box
+    // don't emerge/enter at the same pixel.
+    const outOff = outCount === 2 ? (outIdx === 0 ? -14 : 14) : 0
+    const inOff = inCount === 2 ? (inIdx === 0 ? -14 : 14) : 0
+
+    const x1 = V.leftX + V.boxW              // right edge of left box
+    const y1 = V.rowYs[c.from] + V.boxH / 2 + outOff
+    const x2 = V.rightX                       // left edge of right box
+    const y2 = V.rowYs[c.to] + V.boxH / 2 + inOff
+
+    // Bend the curve so that symmetric pairs (X→Y and Y→X) take
+    // opposite arcs and their midpoints separate. Downward-sloping
+    // arrows bow up; upward-sloping bow down. With rows 200 apart and
+    // bend 35, the six pill Y's land at 154 / 206 / 254 / 306 / 354 /
+    // 406 — every neighbor 48–52 units apart, cleanly readable.
+    const bend = y1 < y2 ? -35 : y1 > y2 ? 35 : 0
+
+    // Cubic bezier — horizontal handles + a vertical bend on both
+    // control points, so the curve is a smooth arc, not an S.
+    const dx = (x2 - x1) / 2
+    const cx1 = x1 + dx
+    const cy1 = y1 + bend
+    const cx2 = x2 - dx
+    const cy2 = y2 + bend
+
+    // For a cubic with these controls, B(0.5) x is exactly the straight
+    // midpoint; B(0.5) y = (y1+y2)/2 + 0.75*bend. So the pill sits
+    // offset from the straight line — which is why the bend was added.
+    const midX = (x1 + x2) / 2
+    const midY = (y1 + y2) / 2 + 0.75 * bend
+
+    return { x1, y1, x2, y2, cx1, cy1, cx2, cy2, midX, midY, path: `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}` }
+  })
+
+  return (
+    <div style={{ background: '#fff', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', padding: '24px 22px 28px' }}>
+      {/* Column headers */}
+      <div style={{ display: 'grid', gridTemplateColumns: `${V.boxW}px 1fr ${V.boxW}px`, alignItems: 'baseline', gap: '20px', marginBottom: '14px' }}>
+        <div>
+          <div style={{ fontFamily: FONT_B, fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#aaa', marginBottom: '2px' }}>Left column</div>
+          <div style={{ fontFamily: FONT_H, fontSize: '15px', fontWeight: 700, color: '#111', letterSpacing: '-0.01em' }}>Decision led by</div>
+        </div>
+        <div style={{ textAlign: 'center', fontFamily: FONT_B, fontSize: '11px', color: '#bbb', fontStyle: 'italic' }}>
+          Hover any arrow to read the rule of engagement
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <div style={{ fontFamily: FONT_B, fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#aaa', marginBottom: '2px' }}>Right column</div>
+          <div style={{ fontFamily: FONT_H, fontSize: '15px', fontWeight: 700, color: '#111', letterSpacing: '-0.01em' }}>Domain owned by</div>
+        </div>
+      </div>
+
+      {/* Diagram — SVG paths + absolutely positioned boxes and pills.
+          The container is position:relative so we can drop HTML pills
+          onto the exact midpoint of each SVG path. */}
+      <div style={{ position: 'relative', width: '100%', maxWidth: `${V.W}px`, margin: '0 auto', aspectRatio: `${V.W}/${V.H}` }}>
+        <svg
+          viewBox={`0 0 ${V.W} ${V.H}`}
+          preserveAspectRatio="xMidYMid meet"
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible' }}
+        >
+          <defs>
+            {CONNECTIONS.map((c, i) => (
+              <marker
+                key={`arrow-${i}`}
+                id={`arrow-${i}`}
+                viewBox="0 0 10 10"
+                refX="8"
+                refY="5"
+                markerWidth="8"
+                markerHeight="8"
+                orient="auto-start-reverse"
+              >
+                <path d="M 0 0 L 10 5 L 0 10 z" fill={c.stance.bg} />
+              </marker>
+            ))}
+          </defs>
+
+          {endpoints.map((e, i) => {
+            const isHover = hover === i
+            const c = CONNECTIONS[i]
+            return (
+              <path
+                key={i}
+                d={e.path}
+                fill="none"
+                stroke={c.stance.bg}
+                strokeWidth={isHover ? 3.5 : 2.2}
+                strokeLinecap="round"
+                markerEnd={`url(#arrow-${i})`}
+                opacity={hover === null || isHover ? 1 : 0.35}
+                style={{ transition: 'stroke-width 0.18s ease, opacity 0.18s ease', cursor: 'pointer', pointerEvents: 'stroke' }}
+                onMouseEnter={() => setHover(i)}
+                onMouseLeave={() => setHover(null)}
+              />
+            )
+          })}
+        </svg>
+
+        {/* Left column boxes */}
+        {DISCIPLINES.map((d) => (
+          <div
+            key={`L-${d.key}`}
+            style={{
+              position: 'absolute', left: `${(V.leftX / V.W) * 100}%`, top: `${(V.rowYs[d.key] / V.H) * 100}%`,
+              width: `${(V.boxW / V.W) * 100}%`, height: `${(V.boxH / V.H) * 100}%`,
+              background: '#faf9f7', border: '1.5px solid rgba(0,0,0,0.09)', borderRadius: '12px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+              fontFamily: FONT_H, fontSize: '15px', fontWeight: 700, color: '#111', letterSpacing: '-0.01em',
+            }}
+          >
+            <span style={{ fontSize: '18px' }} aria-hidden="true">{d.icon}</span>
+            {d.label}
+          </div>
+        ))}
+
+        {/* Right column boxes */}
+        {DISCIPLINES.map((d) => (
+          <div
+            key={`R-${d.key}`}
+            style={{
+              position: 'absolute', left: `${(V.rightX / V.W) * 100}%`, top: `${(V.rowYs[d.key] / V.H) * 100}%`,
+              width: `${(V.boxW / V.W) * 100}%`, height: `${(V.boxH / V.H) * 100}%`,
+              background: '#faf9f7', border: '1.5px solid rgba(0,0,0,0.09)', borderRadius: '12px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+              fontFamily: FONT_H, fontSize: '15px', fontWeight: 700, color: '#111', letterSpacing: '-0.01em',
+            }}
+          >
+            <span style={{ fontSize: '18px' }} aria-hidden="true">{d.icon}</span>
+            {d.label}
+          </div>
+        ))}
+
+        {/* Stance pills — absolutely positioned at each path midpoint */}
+        {endpoints.map((e, i) => {
+          const c = CONNECTIONS[i]
+          const isHover = hover === i
+          return (
+            <div
+              key={`pill-${i}`}
+              onMouseEnter={() => setHover(i)}
+              onMouseLeave={() => setHover(null)}
+              style={{
+                position: 'absolute', left: `${(e.midX / V.W) * 100}%`, top: `${(e.midY / V.H) * 100}%`,
+                transform: 'translate(-50%, -50%)',
+                fontFamily: FONT_B, fontSize: '11px', fontWeight: 700, color: '#111',
+                background: c.stance.bg, padding: '4px 11px', borderRadius: '999px',
+                letterSpacing: '0.02em', whiteSpace: 'nowrap',
+                boxShadow: isHover ? '0 6px 20px rgba(0,0,0,0.18)' : '0 2px 8px rgba(0,0,0,0.08)',
+                cursor: 'pointer', opacity: hover === null || isHover ? 1 : 0.5,
+                transition: 'box-shadow 0.18s ease, opacity 0.18s ease, transform 0.18s ease',
+                zIndex: 3,
+              }}
+            >
+              {c.stance.label}
+            </div>
+          )
+        })}
+
+        {/* Tooltip — anchored under the hovered pill; details also
+            duplicated in a fixed detail rail below when nothing is
+            hovered, so touch users can still read every rule. */}
+        {hover !== null && (
+          <div
+            style={{
+              position: 'absolute',
+              left: `${(endpoints[hover].midX / V.W) * 100}%`,
+              top: `calc(${(endpoints[hover].midY / V.H) * 100}% + 24px)`,
+              transform: 'translate(-50%, 0)',
+              background: '#111', color: '#fff', borderRadius: '12px',
+              padding: '14px 16px', maxWidth: '340px', minWidth: '260px',
+              fontFamily: FONT_B, fontSize: '12.5px', lineHeight: 1.6,
+              boxShadow: '0 12px 32px rgba(0,0,0,0.28)', zIndex: 5, pointerEvents: 'none',
+            }}
+          >
+            <div style={{ fontWeight: 700, color: CONNECTIONS[hover].stance.bg, fontSize: '10.5px', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px' }}>
+              {CONNECTIONS[hover].label}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {CONNECTIONS[hover].rule.map((r, j) => (
+                <div key={j} style={{ display: 'flex', gap: '8px', alignItems: 'baseline' }}>
+                  {r.verb && (
+                    <span
+                      style={{
+                        flexShrink: 0, fontFamily: FONT_B, fontSize: '10.5px', fontWeight: 700,
+                        letterSpacing: '0.06em', textTransform: 'uppercase', color: '#111',
+                        background: CONNECTIONS[hover].stance.bg,
+                        padding: '2px 8px', borderRadius: '999px', lineHeight: 1.4,
+                      }}
+                    >
+                      {r.verb}
+                    </span>
+                  )}
+                  <span style={{ color: '#e6e4de' }}>{r.body}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Fallback list — every connection's rule visible without hover */}
+      <div style={{ marginTop: '18px', paddingTop: '14px', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+        <div style={{ fontFamily: FONT_B, fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#aaa', marginBottom: '10px' }}>
+          All rules of engagement
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '8px 20px' }}>
+          {CONNECTIONS.map((c, i) => (
+            <div
+              key={i}
+              onMouseEnter={() => setHover(i)}
+              onMouseLeave={() => setHover(null)}
+              style={{ fontFamily: FONT_B, fontSize: '12px', lineHeight: 1.6, color: '#555', padding: '6px 0', cursor: 'default' }}
+            >
+              <div style={{ marginBottom: '4px' }}>
+                <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: c.stance.bg, marginRight: '8px', verticalAlign: 'middle' }} />
+                <strong style={{ color: '#111', fontWeight: 650 }}>{c.label}</strong>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', paddingLeft: '16px' }}>
+                {c.rule.map((r, j) => (
+                  <div key={j} style={{ color: '#666' }}>
+                    {r.verb && <strong style={{ color: '#111', fontWeight: 700, marginRight: '6px' }}>{r.verb}</strong>}
+                    {r.body}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function DecisionFramework() {
+  const [view, setView] = useState('table')
   const bandColColor = '#888'
   const dividerColor = 'rgba(0,0,0,0.09)'
   const softDivider = 'rgba(0,0,0,0.05)'
@@ -646,14 +961,53 @@ function DecisionFramework() {
       <h3 style={{ fontFamily: FONT_H, fontSize: 'clamp(20px, 2.2vw, 26px)', fontWeight: 700, letterSpacing: '-0.02em', color: '#111', margin: '2px 0 6px' }}>
         How I act across different situations
       </h3>
-      <p style={{ fontFamily: FONT_B, fontSize: '13.5px', lineHeight: 1.7, color: '#666', margin: '0 0 22px', maxWidth: '680px' }}>
-        Same designer, different postures depending on whose domain it is and who's driving. The rule I follow — hold, advocate, support, or stay out of the way — is set before the meeting, not during it.
-      </p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '16px', margin: '0 0 14px' }}>
+        <p style={{ fontFamily: FONT_B, fontSize: '13.5px', lineHeight: 1.7, color: '#666', margin: 0, maxWidth: '680px' }}>
+          Same designer, different postures depending on whose domain it is and who's driving. The rule I follow — hold, advocate, support, or stay out of the way — is set before the meeting, not during it.
+        </p>
+        {/* View toggle — pill segmented control, top-right of the framework */}
+        <div
+          role="tablist"
+          aria-label="Framework view"
+          style={{
+            display: 'inline-flex', flexShrink: 0, background: '#fff',
+            border: '1px solid rgba(0,0,0,0.08)', borderRadius: '999px',
+            padding: '3px', gap: '2px', boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+          }}
+        >
+          {[
+            { key: 'table', label: 'Table' },
+            { key: 'visual', label: 'Visual' },
+          ].map((opt) => {
+            const active = view === opt.key
+            return (
+              <button
+                key={opt.key}
+                role="tab"
+                aria-selected={active}
+                onClick={() => setView(opt.key)}
+                style={{
+                  fontFamily: FONT_B, fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em',
+                  textTransform: 'uppercase', color: active ? '#fff' : '#666',
+                  background: active ? '#111' : 'transparent', border: 'none',
+                  borderRadius: '999px', padding: '6px 14px', cursor: 'pointer',
+                  transition: 'background 0.18s ease, color 0.18s ease',
+                }}
+              >
+                {opt.label}
+              </button>
+            )
+          })}
+        </div>
+      </div>
 
-      {/* Matrix — a real table, not a stack of cards. Fixed 4-column
+      {view === 'visual' && <DecisionFrameworkVisual />}
+
+      {view === 'table' && (
+      /* Matrix — a real table, not a stack of cards. Fixed 4-column
           grid: band label · situation · stance pill · rule of engagement.
           Wrapped in a single white card so the whole thing reads as one
-          framework rather than as bare text on the page background. */}
+          framework rather than as bare text on the page background. */
       <div
         style={{
           background: '#fff', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.05)',
@@ -754,9 +1108,10 @@ function DecisionFramework() {
         })}
       </div>
       </div>
+      )}
 
       {/* My rules — four cards, matching the deck's standard top-accent
-          NumberedCard recipe used elsewhere. */}
+          NumberedCard recipe used elsewhere. Shown in both views. */}
       <div style={{ marginTop: '30px' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '9px', marginBottom: '14px' }}>
           <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: PALETTE[0], flexShrink: 0 }} />
