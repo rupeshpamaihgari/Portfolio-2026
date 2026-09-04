@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import useInView from '../hooks/useInView'
 import { asset } from '../utils/asset'
 import PdfThumbnail from './PdfThumbnail'
+import AnalyticsCaseStudies from './AnalyticsCaseStudies'
 
 // ── Tab definitions ────────────────────────────────────────────────────────
 const CATEGORY_TABS = [
@@ -647,9 +648,23 @@ function AutomationsOverviewPanel() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '28px' }}>
         {AUTOMATION_METRICS.map(m => <MetricCard key={m.label} {...m} />)}
       </div>
-      <button className="btn-dark" onClick={() => { window.location.hash = '/case-study/3'; window.scrollTo({ top: 0 }) }} style={{ fontSize: '14px', padding: '12px 28px' }}>
-        Read Full Case Study →
-      </button>
+      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <button className="btn-dark" onClick={() => { window.location.hash = '/case-study/3'; window.scrollTo({ top: 0 }) }} style={{ fontSize: '14px', padding: '12px 28px' }}>
+          Read Full Case Study →
+        </button>
+        <button
+          className="btn-dark"
+          onClick={() => { window.location.hash = '/automations/present/1'; window.scrollTo({ top: 0 }) }}
+          style={{ fontSize: '14px', padding: '12px 24px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+          title="Present as slides"
+          aria-label="Present as slides"
+        >
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
+            <path d="M2.6 1.6v7.8a.6.6 0 0 0 .92.5l6.2-3.9a.6.6 0 0 0 0-1L3.52 1.1a.6.6 0 0 0-.92.5Z" fill="currentColor" />
+          </svg>
+          Present
+        </button>
+      </div>
     </div>
   )
 }
@@ -1328,6 +1343,8 @@ export default function ProjectsSection_2() {
               ? <AIAgentsTab sectionRef={sectionRef} />
               : currentTabId === 'automations'
               ? <AutomationsTab sectionRef={sectionRef} />
+              : currentTabId === 'analytics'
+              ? <AnalyticsCaseStudies />
               : currentTabId === 'mobile'
               ? <MobileTab />
               : currentTabId === 'arvr'

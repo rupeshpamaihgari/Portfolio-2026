@@ -18,6 +18,7 @@ import evolutionDeck, { slideIndexForStep } from './components/CaseStudy/Present
 import aiAgentsDeck, { slideIndexForAgent } from './components/CaseStudy/Presentation/decks/aiAgentsDeck'
 import aboutDeck from './components/CaseStudy/Presentation/decks/aboutDeck'
 import automationsDeck from './components/CaseStudy/Presentation/decks/automationsDeck'
+import AnalyticsCasePage from './components/AnalyticsCasePage'
 
 function parseRoute() {
   const raw = window.location.hash.replace(/^#\/?/, '')
@@ -88,6 +89,27 @@ function App() {
     )
   }
 
+  if (head === 'analytics' && a) {
+    return (
+      <AnalyticsCasePage
+        key={a}
+        id={a}
+        onBack={() => navigate('')}
+      />
+    )
+  }
+
+  if (head === 'automations' && a === 'present') {
+    return (
+      <PresentationDeck
+        key={automationsDeck.id}
+        deck={automationsDeck}
+        initialSlide={toSlideIndex(b, countSlides(automationsDeck))}
+        onExit={() => navigate('')}
+      />
+    )
+  }
+
   if (head === 'case-study' && a === 'present') {
     return (
       <PresentationDeck
@@ -109,7 +131,6 @@ function App() {
         key={`case-study-${step}`}
         onClose={() => navigate('')}
         initialStep={step}
-        onPlay={(s) => navigate(`case-study/present/${slideIndexForStep(s)}`)}
       />
     )
   }
